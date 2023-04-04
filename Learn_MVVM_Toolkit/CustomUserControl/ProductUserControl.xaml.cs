@@ -13,15 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Learn_MVVM_Toolkit;
-
-/// <summary>
-/// Interaction logic for OrderUserControl.xaml
-/// </summary>
-public partial class OrderUserControl : UserControl
+namespace Learn_MVVM_Toolkit.CustomUserControl
 {
-    public OrderUserControl()
+    /// <summary>
+    /// Interaction logic for ProductUserControl.xaml
+    /// </summary>
+    public partial class ProductUserControl : UserControl
     {
-        InitializeComponent();
+        public ProductUserControl()
+        {
+            InitializeComponent();
+        }
     }
 }

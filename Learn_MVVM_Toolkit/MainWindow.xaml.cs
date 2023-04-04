@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Learn_MVVM_Toolkit.CustomUserControl;
+
 
 namespace Learn_MVVM_Toolkit;
 
@@ -22,16 +24,19 @@ namespace Learn_MVVM_Toolkit;
 /// </summary>
 public partial class MainWindow : Window
 {
-    
+
+    private MainWindowViewModel mainViewModel;
+
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = new MainWindowViewModel();
-        MainWindowViewModel model = (MainWindowViewModel)DataContext;
-        // UserControl for Orders
+        DataContext = mainViewModel = new MainWindowViewModel();
+        
         OrderControl.Content = new OrderUserControl { DataContext = this.DataContext };
 
-        model.ShowAddToOrderDailog += Model_ShowAddToOrderDailog;
+        ProductListingControl.Content = new ProductUserControl { DataContext = this.DataContext };
+
+        mainViewModel.ShowAddToOrderDailog += Model_ShowAddToOrderDailog;
 
     }
 
