@@ -25,4 +25,3 @@ namespace Learn_MVVM_Toolkit
             InitializeComponent();
         }
     }
-}
