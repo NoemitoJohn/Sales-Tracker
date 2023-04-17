@@ -22,7 +22,7 @@ public partial class OrderDialog : Window
 {
     public OrderDialog(MainWindowViewModel mainViewModel, SaleProduct sale)
     {
-        DataContext = new OrderDialogViewModel(mainViewModel, sale);
+        //DataContext = new OrderDialogViewModel(mainViewModel, sale);
 
         InitializeComponent();
 

@@ -4,9 +4,67 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Learn_MVVM_Toolkit.CustomUserControl"
+             xmlns:u="clr-namespace:Learn_MVVM_Toolkit.Util"
+             xmlns:behavior="clr-namespace:Learn_MVVM_Toolkit.CustomBehavior"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Popup x:Name="OrderPopup" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                Width="210" 
+               Height="110"
+               IsOpen="{Binding Path= IsShowPopup}"
+               AllowsTransparency="True"
+               >
+
+            <Border>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.8" Color="Black"/>
+                </Border.Effect>
+                <Border Margin="4" Background="White" CornerRadius="5" BorderThickness=".5" BorderBrush="Black">
+                    <Grid Margin="5" DataContext="{Binding SelectedProduct}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <!--Item Name-->
+                        <TextBlock Text="Name:" />
+                        <TextBox Text="{Binding Path= Name}" Grid.Column="1" IsEnabled="False"/>
+                        <!--Item Price-->
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="Price:"/>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path= Price, UpdateSourceTrigger=PropertyChanged}"/>
+                        <!--Count (Qty)-->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Qty" />
+                        <TextBox Text="{Binding Path= Count,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" Name="QtyTextBox">
+                            <i:Interaction.Behaviors>
+                                <!--<u:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="9"  />-->
+                                <behavior:NumericTexboxBehavior EmptyValue="0"/>
+                            </i:Interaction.Behaviors>
+                        </TextBox>
+                        <!--Total Price-->
+                        <TextBlock Text="Total:" Grid.Row="3"/>
+                        <TextBox IsEnabled="False" Text="{Binding Path= Total}" Grid.Column="1" Grid.Row="3" />
+                        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right">
+                            <Button Content="Cancel" IsCancel="True" Command=""/>
+                            <Button Content="Cart" Command="{Binding Path=DataContext.AddCartCommand,
+                                                                     RelativeSource={RelativeSource 
+                                                                     AncestorType={x:Type UserControl}}}"/>
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+            </Border>
+        </Popup>
+
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Path = Products}" Margin="0 5 0 0">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -20,9 +78,10 @@
                         <TextBlock Text="{Binding Name}"/>
                         <TextBlock Grid.Column="1" Text="{Binding Price}"/>
                         <TextBlock Grid.Column="2" Text="{Binding Count}"/>
-                        <Button Grid.Column="3" Content="Add" 
+                        <Button Grid.Column="3" Content="Add" x:Name="Add"
+                                Click="B_Click"
                                 Command="{Binding Path=DataContext.AddProductCommand,
-                                RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                 CommandParameter="{Binding}"/>
                     </Grid>
                 </DataTemplate>

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Learn_MVVM_Toolkit.Dialog;
+using Learn_MVVM_Toolkit.ObservableObjects;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,13 +27,19 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private double _total;
 
-    public ObservableCollection<SaleProduct> SaleProducts { get; } = new();
+    public ObservableCollection<SaleProductObservable> SaleProducts { get; } = new();
 
+    [ObservableProperty]
+    private SaleProduct? _saleProductSelected;
+
+    [ObservableProperty]
+    private bool _isShowPopup;
 
     public MainWindowViewModel()
     {
         TestProduct();
         SaleProducts.CollectionChanged += SaleProducts_CollectionChanged;
+       //_isShowPopup = true;
     }
 
     private void SaleProducts_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -49,23 +56,26 @@ public partial class MainWindowViewModel : ObservableObject
     public void AddProduct(Product product)
     {
 
-        SaleProduct sale = new SaleProduct(product);
-        ShowAddToOrderDailog!.Invoke(this, sale);
+        SaleProductSelected = new SaleProduct(product);
+
+        IsShowPopup = true;
 
     }
 
     [RelayCommand]
     public void CreateOrder()
     {
-        Order order = new Order();
+     
     }
 
     void TestProduct()
     {
-        Products.Add(new Product("Test Item 1", 12, 20));
-        Products.Add(new Product("Test Item 2", 45, 50));
-        Products.Add(new Product("Test Item 2", 20, 100));
-        Products.Add(new Product("Test Item 2", 45, 75));
+        Products.Add( new Product("Item 1", 10 , 20));
+        Products.Add( new Product("Item 2", 20,  40));
+        Products.Add( new Product("Item 1", 30 , 60));
+        Products.Add( new Product("Item 1", 40 , 80));
+        Products.Add( new Product("Item 1", 50 , 100));
+        Products.Add( new Product("Item 1", 60 , 120));
     }
 
 }

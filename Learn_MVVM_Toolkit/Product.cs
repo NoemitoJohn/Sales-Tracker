@@ -8,7 +8,6 @@ namespace Learn_MVVM_Toolkit;
 
 public class Product
 {
-    
     public Product(string name, double price, int count)
     {
         Name = name;
@@ -16,7 +15,7 @@ public class Product
         Count = count;
     }
     // Emprove this
-    public string Name { get; protected set; }
-    public double Price { get; protected set; }
-    public int Count { get; protected set; }
+    public string Name { get;  set; }
+    public double Price { get; set; }
+    public int Count { get; set; }
 }

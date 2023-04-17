@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Learn_MVVM_Toolkit.ViewModel;
+
 using Learn_MVVM_Toolkit.CustomUserControl;
 
 
@@ -26,25 +28,31 @@ public partial class MainWindow : Window
 {
 
     private MainWindowViewModel mainViewModel;
-
+    ProductUserControl productUserControl;
     public MainWindow()
     {
+        
         InitializeComponent();
+
         DataContext = mainViewModel = new MainWindowViewModel();
         
-        OrderControl.Content = new OrderUserControl { DataContext = this.DataContext };
+        ProductUserControlViewModel productViewModel = new ProductUserControlViewModel(mainViewModel);
+        
 
-        ProductListingControl.Content = new ProductUserControl { DataContext = this.DataContext };
+        OrderControl.Content = new OrderUserControl { DataContext = this.DataContext };
+        productUserControl = new ProductUserControl { DataContext = productViewModel };
+
+        ProductListingControl.Content = productUserControl;
 
         mainViewModel.ShowAddToOrderDailog += Model_ShowAddToOrderDailog;
-
+        
     }
 
     private void Model_ShowAddToOrderDailog(MainWindowViewModel mainViewModel, SaleProduct sale)
     {
         var dialog = new OrderDialog(mainViewModel, sale);
+
         dialog.Owner = this;
-        
         dialog.ShowDialog();
 
         
