@@ -8,38 +8,73 @@ using System.Threading.Tasks;
 
 namespace Learn_MVVM_Toolkit.ObservableObjects;
 
-public partial class SaleProductObservable : ObservableValidator
+public partial class SaleProductObservable : ObservableObject
 {
 
-    [ObservableProperty]
     private string _name;
-    
-    [ObservableProperty]
-    private double _price;
-    
-    [ObservableProperty]
-    private int _count;
-    
-    [ObservableProperty]
-    private double _total;
-
-    public SaleProductObservable(Product product)
+    public string Name
     {
-        Name = product.Name;
-        Price = product.Price;
+        get => _name;
+        set => SetProperty(ref _name, value);
+    }
+
+    private double _price;
+    public double Price
+    {
+        get => _price;
+        set
+        {
+            if (SetProperty(ref _price, value))
+            {
+                OnPropertyChanged(nameof(Total));
+            }
+        }
+    }
+
+    private int _count;
+    public int Count
+    {
+        get => _count;
+        set
+        {
+            if (SetProperty(ref _count, value))
+            {
+                OnPropertyChanged(nameof(Total));
+            }
+        }
+    }
+
+    private double _total;
+    public double Total
+    {
+        get
+        {
+            _total = Price * Count;
+            return _total;
+        }
+        set => SetProperty(ref _total, value);
+    }
+
+    private readonly Product product;
+
+    private readonly ProductObservable productObservable;
+    public SaleProductObservable(ProductObservable ObservableP)
+    {
+        productObservable = ObservableP;
+        product = productObservable.GetProduct();
+        Name = productObservable.Name; 
+        Price = productObservable.Price;
         Count = 1;
         Total = Price * Count;
     }
 
-
-
-    partial void OnPriceChanged(double value)
+    public int GetProductAvailableCount()
     {
-        // TODO: Prevent user entering a number of 0;
-        Total = Price * Count;
+        return productObservable.Count;
     }
-    partial void OnCountChanged(int value)
+
+    public ProductObservable GetProduct()
     {
-        Total = Price * Count;
+        return productObservable;
     }
 }

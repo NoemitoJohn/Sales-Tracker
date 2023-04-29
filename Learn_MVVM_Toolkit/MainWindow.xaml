@@ -13,7 +13,7 @@
             <ColumnDefinition Width=".40*"/>
         </Grid.ColumnDefinitions>
         <!--Side Bar-->
-        <Button Content="Add Product"  Grid.Column="0" Command="{Binding CreateOrderCommand}"/>
+        <Button Content="Add Product"  Grid.Column="0" Click="AddProductDialogHandler"/>
         <!--Create Order Layout-->
         <Border BorderThickness="1" Grid.Column="1" BorderBrush="Black">
             <Grid Margin="3 3" x:Name="CreateOrderLayout">
@@ -81,6 +81,7 @@
             <Grid Margin=" 5 5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <!--Search Bar for Product-->
@@ -93,12 +94,12 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Name" VerticalAlignment="Bottom"/>
-                    <TextBox  Grid.Column="1" Width="200" Margin="5  0 0 0"/>
+                    <TextBox  Grid.Column="1" Width="200" Margin="5 0 0 0"/>
                     <Button Grid.Column="3" Content="Search"/>
 
                 </Grid>
                 <!--Available Product Listing-->
-                <ContentControl Grid.Row="1" x:Name="ProductListingControl"/>
+                <ContentControl Grid.Row="2" x:Name="ProductListingControl" Margin="0 5 0 0"/>
                 
             </Grid>
         </Border>

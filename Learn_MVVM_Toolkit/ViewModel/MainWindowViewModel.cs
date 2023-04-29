@@ -1,81 +1,85 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Learn_MVVM_Toolkit.Dialog;
 using Learn_MVVM_Toolkit.ObservableObjects;
-using System;
+using Learn_MVVM_Toolkit.Service;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace Learn_MVVM_Toolkit;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public delegate void Show(MainWindowViewModel model, SaleProduct sale);
-    public event Show? ShowAddToOrderDailog;
 
-    public ObservableCollection<Product> Products { get; } = new();
-
-    [ObservableProperty]
-    private Order? _order;
-
-
-    [ObservableProperty]
-    private double _total;
-
+    public ObservableCollection<ProductObservable> Products { get; } = new();
     public ObservableCollection<SaleProductObservable> SaleProducts { get; } = new();
 
-    [ObservableProperty]
-    private SaleProduct? _saleProductSelected;
+    private Order _order;
+    private SaleProduct _saleProductSelected;
+    private double _total;
 
-    [ObservableProperty]
-    private bool _isShowPopup;
+    private IDataBaseModel databaseModel;
 
-    public MainWindowViewModel()
+    public Order Order
     {
-        TestProduct();
-        SaleProducts.CollectionChanged += SaleProducts_CollectionChanged;
-       //_isShowPopup = true;
+        get => _order;
+        set => SetProperty(ref _order, value);
+    }
+    
+    public double Total
+    {
+        get => _total;
+        set => SetProperty(ref _total, value);
+    }
+    public SaleProduct SaleProductSelected
+    {
+        get => _saleProductSelected;
+        set => SetProperty(ref _saleProductSelected, value);
     }
 
-    private void SaleProducts_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    public MainWindowViewModel(IDataBaseModel DbModel)
+    {
+        databaseModel = DbModel;
+        // TODO: Convert Product Object into ProductObservable
+
+        IList<Product> products = databaseModel.GetAllProductAsList();
+        //TODO: Improve this make sure to update the ProductObservable if new Item is added 
+
+
+        //TODO: Improve this for loop
+        for (int i = 0; i < products.Count; i++)
+        {
+            Products.Add(new ProductObservable(products[i]));
+        }
+        
+        SaleProducts.CollectionChanged += SaleProducts_CollectionChanged;
+
+    }
+
+    private void SaleProducts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
         if(e.NewItems != null)
         {
-            foreach(SaleProduct item in e.NewItems) {     
+            foreach(SaleProductObservable item in e.NewItems) {     
                 Total += item.Total;
             }
         }
     }
     //TODO: Maybe add a method to add an item to Saleproduct?????  
-    [RelayCommand]
-    public void AddProduct(Product product)
+    public void AddToSaleProductObservable(SaleProductObservable sale)
     {
-
-        SaleProductSelected = new SaleProduct(product);
-
-        IsShowPopup = true;
-
+        SaleProducts.Add(sale);
     }
 
-    [RelayCommand]
+    public void AddToProductObservable(ProductObservable product)
+    {
+        Products.Add(product);
+    }
+
     public void CreateOrder()
     {
-     
-    }
-
-    void TestProduct()
-    {
-        Products.Add( new Product("Item 1", 10 , 20));
-        Products.Add( new Product("Item 2", 20,  40));
-        Products.Add( new Product("Item 1", 30 , 60));
-        Products.Add( new Product("Item 1", 40 , 80));
-        Products.Add( new Product("Item 1", 50 , 100));
-        Products.Add( new Product("Item 1", 60 , 120));
+            
     }
 
 }

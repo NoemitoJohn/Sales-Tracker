@@ -40,13 +40,14 @@
                         </Grid.ColumnDefinitions>
                         
                         <TextBlock Text="{Binding Count}" Grid.Row="1"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Name}" Grid.Row="1"/>
-                        <TextBlock Grid.Column="2" Text="{Binding Price}" HorizontalAlignment="Center" Grid.Row="1"/>
-                        <TextBlock Grid.Column="3" Text="{Binding Total}" HorizontalAlignment="Center" Grid.Row="1"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Path = Name}" Grid.Row="1"/>
+                        <TextBlock Grid.Column="2" Text="{Binding Path =  Price}" HorizontalAlignment="Center" Grid.Row="1"/>
+                        <TextBlock Grid.Column="3" Text="{Binding Path =  Total}" HorizontalAlignment="Center" Grid.Row="1"/>
                     
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+       
     </Grid>
 </UserControl>

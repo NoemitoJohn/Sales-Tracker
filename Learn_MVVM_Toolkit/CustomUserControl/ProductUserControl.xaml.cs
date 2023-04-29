@@ -25,10 +25,19 @@ public partial class ProductUserControl : UserControl
     public ProductUserControl()
     {
         InitializeComponent();
-        QtyTextBox.SelectionLength= 5;
+        PreviewKeyDown += PreviewKeyDownHandler;
+        
     }
 
-
+    private void PreviewKeyDownHandler(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            if (OrderPopup.IsOpen == true)
+                OrderPopup.IsOpen = false;
+        }
+        
+    }
 
     private void B_Click(object sender, RoutedEventArgs e)
     {
@@ -37,13 +46,14 @@ public partial class ProductUserControl : UserControl
         OrderPopup.Placement = PlacementMode.Bottom;
         OrderPopup.HorizontalOffset = -(OrderPopup.Width - ((Button)sender).ActualWidth);
 
-
-
     }
+    
 
-    private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    //TODO: Make the floating window close if the user click out side the floating window (Main Window)
+    
+    private void ClosePoup(object sender, RoutedEventArgs e)
     {
-        Regex regex = new Regex("[^0-9]+");
-        e.Handled = regex.IsMatch(e.Text);
+        if(OrderPopup.IsOpen == true)
+            OrderPopup.IsOpen = false;
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Learn_MVVM_Toolkit.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +24,8 @@ public partial class OrderUserControl : UserControl
 {
     public OrderUserControl()
     {
+
+        DataContext = Ioc.Default.GetService<OrderUserControlViewModel>();
         InitializeComponent();
     }
 }

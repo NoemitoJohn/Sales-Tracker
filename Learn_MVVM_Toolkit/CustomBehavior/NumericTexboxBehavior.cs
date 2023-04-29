@@ -12,15 +12,12 @@ using System.Windows.Controls;
 using System.Windows.Media.Converters;
 using System.Security.Policy;
 using static System.Net.Mime.MediaTypeNames;
+using System.Printing.IndexedProperties;
 
 namespace Learn_MVVM_Toolkit.CustomBehavior;
 
 public class NumericTexboxBehavior : Behavior<TextBox>
 {
-
-    private char oldChar;
-    private char newChar;
-
     public static readonly DependencyProperty EmptyValueProperty =
     DependencyProperty.Register(nameof(EmptyValue),
         typeof(string),
@@ -33,22 +30,28 @@ public class NumericTexboxBehavior : Behavior<TextBox>
         set { SetValue(EmptyValueProperty, value); }
     }
 
+
+    private string Text;
     protected override void OnAttached()
     {
         base.OnAttached();
         AssociatedObject.PreviewTextInput += PreviewTextHandler;
         AssociatedObject.PreviewKeyDown += PreviewKeyDownHandler;
+
+        Text = EmptyValue;
+
     }
 
     private void PreviewKeyDownHandler(object sender, KeyEventArgs e)
     {
 
-        string text = null;
-
         if (e.Key == Key.Back)
         {
             if (AssociatedObject.SelectionStart > 0)
-                text = this.AssociatedObject.Text.Remove(AssociatedObject.SelectionStart - 1, 1);
+            {
+                Text = AssociatedObject.Text.Remove(AssociatedObject.SelectionStart - 1, 1);
+            }
+
         }
 
         if (e.Key == Key.Up)
@@ -63,7 +66,7 @@ public class NumericTexboxBehavior : Behavior<TextBox>
         {
             int count = int.Parse(AssociatedObject.Text);
 
-            if (count <= 0)
+            if (count <= int.Parse(EmptyValue))
                 return;
 
             count--;
@@ -72,11 +75,15 @@ public class NumericTexboxBehavior : Behavior<TextBox>
 
         }
 
-        if (text == string.Empty)
+
+        if (Text == string.Empty)
         {
-            this.AssociatedObject.Text = this.EmptyValue;
+            this.AssociatedObject.Text = Text = this.EmptyValue;
             if (e.Key == Key.Back)
+            {
                 AssociatedObject.SelectionStart++;
+
+            }
             e.Handled = true;
         }
     }
@@ -85,11 +92,13 @@ public class NumericTexboxBehavior : Behavior<TextBox>
     private void PreviewTextHandler(object sender, TextCompositionEventArgs e)
     {
         e.Handled = Validate(e.Text);
+
     }
 
     private bool Validate(string text)
     {
         Regex regex = new Regex("[^0-9]+");
-        return regex.IsMatch(text);
+        bool T = regex.IsMatch(text);
+        return T;
     }
 }

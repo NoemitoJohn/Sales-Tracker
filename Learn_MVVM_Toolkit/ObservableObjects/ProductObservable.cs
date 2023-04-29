@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,27 +10,62 @@ namespace Learn_MVVM_Toolkit.ObservableObjects;
 
 public partial class ProductObservable : ObservableObject
 {
-    [ObservableProperty]
-    protected string _name;
 
-    [ObservableProperty]
-    protected double _price;
+    //public string Name
+    //{
+    //    get => product.Name;
+    //    set => SetProperty(product.Name, value, product, (u, n) => u.Name = n);
+    //}
+    public int ID { get;}
 
-    [ObservableProperty]
-    protected int _count;
+    private string _name;
 
-    public ProductObservable(Product product)
-    { 
-        
-        Name = product.Name;
-        Price = product.Price;
-        Count = product.Count;
-    }
-    public ProductObservable(string name,  double price, int count)
+    public string Name
     {
-        Name = name;
-        Price = price;
-        Count = count;
+        get => _name;
+        set => SetProperty(ref _name, value);
+    }
+
+
+    //public double Price
+    //{
+    //    get => product.Price;
+    //    set => SetProperty(product.Price, value, product, (u, n) => u.Price = n);
+    //}
+
+    private double _price;
+    public double Price
+    {
+        get => _price;
+        set => SetProperty(ref _price, value);
+    }
+
+    private int _count;
+
+    public int Count
+    {
+        get => _count;
+        set => SetProperty(ref _count, value);
+    }
+
+    private readonly Product product;
+    
+    public ProductObservable(Product p)
+    { 
+        product = p;
+        ID = product.ID;
+        Name= product.Name;
+        Price= product.Price; 
+        Count= product.Count;
 
     }
+
+    public Product GetProduct() => product;
+
+    public void SubtractToAvailbleCount(int val)
+    {
+        Count -= val;
+        //TODO: Also subract the amount to our database
+    }
+        
 }

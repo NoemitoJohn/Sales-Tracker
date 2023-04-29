@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learn_MVVM_Toolkit", "Learn_MVVM_Toolkit\Learn_MVVM_Toolkit.csproj", "{6BF618AD-F782-4044-ACCD-91AB590FE257}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learn_MVVM_Toolkit", "Learn_MVVM_Toolkit\Learn_MVVM_Toolkit.csproj", "{6BF618AD-F782-4044-ACCD-91AB590FE257}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApplicationTesting", "..\ConsoleApp\ConsoleApplicationTesting\ConsoleApplicationTesting.csproj", "{F94EAD08-5B79-40BD-8388-F850EC32C31E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{6BF618AD-F782-4044-ACCD-91AB590FE257}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BF618AD-F782-4044-ACCD-91AB590FE257}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BF618AD-F782-4044-ACCD-91AB590FE257}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F94EAD08-5B79-40BD-8388-F850EC32C31E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F94EAD08-5B79-40BD-8388-F850EC32C31E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F94EAD08-5B79-40BD-8388-F850EC32C31E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F94EAD08-5B79-40BD-8388-F850EC32C31E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
