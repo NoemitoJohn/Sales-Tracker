@@ -6,7 +6,10 @@
              xmlns:local="clr-namespace:Learn_MVVM_Toolkit.CustomUserControl"
              xmlns:u="clr-namespace:Learn_MVVM_Toolkit.Util"
              xmlns:behavior="clr-namespace:Learn_MVVM_Toolkit.CustomBehavior"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+             xmlns:sys="clr-namespace:System;assembly=netstandard" 
+             xmlns:viewmodel="clr-namespace:Learn_MVVM_Toolkit.ViewModel" 
+             d:DataContext="{d:DesignInstance Type=viewmodel:ProductUserControlViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -17,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <!--Header-->
-        <Grid Grid.Row="0" Width="{Binding ActualWidth, ElementName=ItemListing}" HorizontalAlignment="Left">
+        <Grid Grid.Row="0" x:Name="Header" HorizontalAlignment="Left" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -29,8 +32,8 @@
             <TextBlock Text="Available" Grid.Column="2"/>
         </Grid>
 
-        <!--Popup Edit-->
-        <Popup x:Name="OrderPopup" HorizontalAlignment="Left" VerticalAlignment="Top" 
+        <!--#region PopUp-->
+        <!--<Popup x:Name="OrderPopup" HorizontalAlignment="Left" VerticalAlignment="Top" 
                Width="210" 
                Height="110"
                IsOpen="{Binding Path= IsShowPopup}"
@@ -55,27 +58,27 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <!--Item Name-->
+                        --><!--Item Name--><!--
                         <TextBlock Text="Name:" />
                         <TextBox Text="{Binding Path= Name}" Grid.Column="1" IsEnabled="False"/>
-                        <!--Item Price-->
+                        --><!--Item Price--><!--
                         <TextBlock Grid.Column="0" Grid.Row="1" Text="Price:"/>
                         <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path= Price, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <!--Count (Qty)-->
+                        --><!--Count (Qty)--><!--
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Qty" />
                         <TextBox Text="{Binding Path= Count,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" Name="QtyTextBox">
 
                             <i:Interaction.Behaviors>
                                 <behavior:NumericTexboxBehavior EmptyValue="0"/>
                             </i:Interaction.Behaviors>
-
+                            
                         </TextBox>
-                        <!--Total Price-->
+                        --><!--Total Price--><!--
                         <TextBlock Text="Total:" Grid.Row="3"/>
                         <TextBox IsEnabled="False" Text="{Binding Path= Total}" Grid.Column="1" Grid.Row="3" />
 
-                        <!--Buttons Cancel and Cart-->
+                        --><!--Buttons Cancel and Cart--><!--
                         <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right">
                             <Button Content="Cancel" x:Name="ClosePopUpButton" Click="ClosePoup"/>
                             <Button Content="Cart" Command="{Binding Path=DataContext.AddCartCommand,
@@ -86,46 +89,50 @@
                     </Grid>
                 </Border>
             </Border>
-        </Popup>
-        <!--<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Visible" >-->
-            <!--ItemListing-->
-            <ItemsControl Grid.Row="1" Name="ItemListing" ItemsSource="{Binding Path = Products}"  Margin="0 5 0 0">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+        </Popup>-->
+        <!--#endregion-->
+        <ContentControl x:Name="ContentControlPopUp"/>
 
-                <ItemsControl.Template>
-                    <ControlTemplate TargetType="ItemsControl">
-                        <ScrollViewer CanContentScroll="True" Padding="{TemplateBinding Padding}" Focusable="False">
-                            <ItemsPresenter />
-                        </ScrollViewer>
-                    </ControlTemplate>
-                </ItemsControl.Template>
-                
+        <!--ItemListing-->
+        <ItemsControl Grid.Row="1" VirtualizingPanel.ScrollUnit="Pixel" x:Name="ItemListing" ItemsSource="{Binding Path = Products}"  Margin="0 5 0 0">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <!--<StackPanel VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"/>-->
+                    <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="auto" SharedSizeGroup="ButtonAddGroup" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Name}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Price}" />
-                            <TextBlock Grid.Column="2" Text="{Binding Count}" />
-                            <Button Grid.Column="3" Content="Add" x:Name="Add"
-                                Click="B_Click"
+            <ItemsControl.Template>
+                <ControlTemplate TargetType="ItemsControl">
+                    <ScrollViewer x:Name="ScrollViewPresenter" CanContentScroll="True" Focusable="False">
+                        <ScrollViewer.Resources>
+                            <!--<sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">12</sys:Double>-->
+                        </ScrollViewer.Resources>
+                        <ItemsPresenter/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ItemsControl.Template>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto" SharedSizeGroup="ButtonAddGroup" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Price}" />
+                        <TextBlock Grid.Column="2" Text="{Binding Count}" />
+                        <Button Grid.Column="3" Content="Add" x:Name="Add"
+                                Click="ShowPopupWindowHandler"
                                 Command="{Binding Path=DataContext.AddProductCommand,
                                 RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                 CommandParameter="{Binding}"/>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        <!--</ScrollViewer>-->
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </UserControl>

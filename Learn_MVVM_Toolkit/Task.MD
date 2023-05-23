@@ -19,5 +19,5 @@
 
 
 # Implement a mouseover on each Item Control change color???
-
+# Create a product information tab that display more info about the product etc...
 # Implements Check Out 

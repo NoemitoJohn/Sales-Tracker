@@ -12,12 +12,20 @@ public interface IDataBaseModel
 {
     public void CreateDatabase();
 
-    public Result InsertProduct(Product p);
+   // public Result InsertProduct(Product p);
 
     public List<Product> GetAllProductAsList();
 
+    public Product InsertProductTransaction(Product product);
 
     public List<ProductObservable> GetAllObservableProductsAsList();
 
     public void DeleteProduct(Product p);
+
+    public void InsertSold(Sold order);
+
+    public List<Sold> GetAllSoldOrders();
+    
+
+
 }

@@ -1,19 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Learn_MVVM_Toolkit.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Learn_MVVM_Toolkit;
 
@@ -22,10 +10,55 @@ namespace Learn_MVVM_Toolkit;
 /// </summary>
 public partial class OrderUserControl : UserControl
 {
+    private Window mainWindow;
+
+    private ScrollViewer scrollViewer;
+    public ScrollViewer ScrollViewer  => scrollViewer;
     public OrderUserControl()
     {
 
-        DataContext = Ioc.Default.GetService<OrderUserControlViewModel>();
         InitializeComponent();
+        Init();
+    
+    }
+
+    
+
+    private void Init()
+    {
+        DataContext = Ioc.Default.GetService<OrderUserControlViewModel>();
+
+        mainWindow = Application.Current.MainWindow;
+
+        mainWindow.SizeChanged += MainWindow_SizeChanged_Handler;
+    }
+
+    private void MainWindow_SizeChanged_Handler(object sender, SizeChangedEventArgs e)
+    {
+        if (scrollViewer == null)
+            scrollViewer = (ScrollViewer)SalesItemControl.Template.FindName("ScrollViewPresenter", SalesItemControl);
+
+        ItemsPresenter presenter = (ItemsPresenter)scrollViewer.Content;
+        SaleGridHeader.Width = presenter.ActualWidth;
+    }
+
+    private void ItemClickedHandler(object sender, RoutedEventArgs e)
+    {
+        ItemSelectedPopup.IsOpen= false;
+
+        Button itemButton = (Button)sender;
+        double width = itemButton.ActualWidth;
+
+        Border popupContent = (Border)ItemSelectedPopup.Child;
+
+        ItemSelectedPopup.PlacementTarget = itemButton;
+        ItemSelectedPopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        ItemSelectedPopup.IsOpen = true;
+        ItemSelectedPopup.HorizontalOffset = (width - popupContent.ActualWidth) - 2;
+    }
+
+    private void RemoveClickedHandler(object sender, RoutedEventArgs e)
+    {
+        if (ItemSelectedPopup.IsOpen == true) ItemSelectedPopup.IsOpen = false;
     }
 }

@@ -23,14 +23,17 @@ public partial class ProductDialogViewModel : ObservableObject
 
     private int _count;
 
+    private string _category;
+
+    private double _retailPrice;
 
     private IDataBaseModel dataBaseModel;
+
     public string Name
     {
         get => _name;
         set => SetProperty(ref _name, value);
     }
-
 
     public double Price
     {
@@ -53,6 +56,19 @@ public partial class ProductDialogViewModel : ObservableObject
         }
     }
 
+    public double RetailPrice
+    {
+        get => _retailPrice;
+        set => SetProperty(ref _retailPrice, value);
+    }
+
+    public string Category
+    {
+        get => _category;
+        set => SetProperty(ref _category, value);
+    }
+
+    //
 
     private MainWindowViewModel _mainViewModel;
 
@@ -67,20 +83,16 @@ public partial class ProductDialogViewModel : ObservableObject
     }
     private void AddProductItem()
     {
-        Product productData = new Product(Name, Count, Price);
-
-        Result r = dataBaseModel.InsertProduct(productData);
+        //Product dbProduct = dataBaseModel.InsertProductTransaction(
+        //    new Product(Name, Count, Price, RetailPrice, Category, new Product.Info("test")));
 
         // the problem is the new inserted product dont have an ID 
-        if (r.IsSuccess)
-        {   
-            productData.ID = r.ID;
-
-            ProductObservable productObservable = new ProductObservable(productData);
-            _mainViewModel.AddToProductObservable(productObservable);
-        }
-
-
+        //if (dbProduct != null)
+        //{
+        //    ProductObservable productObservable = new ProductObservable(dbProduct);
+        //    _mainViewModel.AddToProductObservable(productObservable);
+        //}
+        //TODO inform user if the insert command is success or fail (Toast)
     }
 
     private bool CanAddItem()

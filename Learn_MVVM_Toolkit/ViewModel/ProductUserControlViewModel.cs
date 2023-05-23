@@ -13,8 +13,8 @@ namespace Learn_MVVM_Toolkit.ViewModel;
 
 public partial class ProductUserControlViewModel : ObservableObject
 {
-    private MainWindowViewModel mainViewModel;
-    public ObservableCollection<ProductObservable> Products => mainViewModel.Products;
+    private MainWindowViewModel _mainViewModel;
+    public ObservableCollection<ProductObservable> Products => _mainViewModel.Products;
 
     private bool _isShowPopup;
 
@@ -37,14 +37,15 @@ public partial class ProductUserControlViewModel : ObservableObject
         
     public ProductUserControlViewModel(MainWindowViewModel mainViewModel)
     {
-        this.mainViewModel = mainViewModel;
+        _mainViewModel = mainViewModel;
         
-        IsShowPopup = false;
+        IsShowPopup = false; 
 
         AddProductCommand = new RelayCommand<ProductObservable>(AddProduct);
         AddCartCommand = new RelayCommand<SaleProductObservable>(AddCart);
     }
 
+    //Convert the selected ProductObservable into SaleProductObservable
     private void AddProduct(ProductObservable product)
     {
 
@@ -55,12 +56,12 @@ public partial class ProductUserControlViewModel : ObservableObject
     public void AddCart(SaleProductObservable sale)
     {
         // TODO: Get the OrderUserControlViewModel object and add to selected item
- 
-        if (sale.Count <= sale.GetProductAvailableCount())
+        // TODO: Improve!!
+        if (sale.Count <= sale.Available)
         {
             IsShowPopup = false;
-            mainViewModel.AddToSaleProductObservable(sale);
-            sale.GetProduct().SubtractToAvailbleCount(sale.Count);
+            _mainViewModel.AddToSaleProductObservable(sale);
+            sale.ProductInfo.SubtractToAvailbleCount(sale.Count);
         }
     }
 }

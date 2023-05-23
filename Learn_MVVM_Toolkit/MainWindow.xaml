@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Learn_MVVM_Toolkit"
+        xmlns:local="clr-namespace:Learn_MVVM_Toolkit" 
+        d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
+        xmlns:userControl="clr-namespace:Learn_MVVM_Toolkit.CustomUserControl"
         mc:Ignorable="d"
         Title="Inventory" Height="590" Width="975">
     <Grid Margin="5 5">
@@ -13,9 +15,15 @@
             <ColumnDefinition Width=".40*"/>
         </Grid.ColumnDefinitions>
         <!--Side Bar-->
-        <Button Content="Add Product"  Grid.Column="0" Click="AddProductDialogHandler"/>
+        <StackPanel Grid.Column="0" >
+            <Button Content="Product Info" Click="ProductInfoDialogHandler"/>
+            <Button Content="Sale Info" Click="SaleInfoDialogHandler"/>
+            
+        </StackPanel>
+
         <!--Create Order Layout-->
-        <Border BorderThickness="1" Grid.Column="1" BorderBrush="Black">
+
+        <Border BorderThickness="1"  Grid.Column="1" BorderBrush="Black">
             <Grid Margin="3 3" x:Name="CreateOrderLayout">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -23,57 +31,20 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 
-                <!--Customer Info Layout-->
-                <Grid Grid.Row="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-                    
-                    <!--Customers Name-->
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        
-                        <!--Customers Name-->
-                        <TextBlock Text="Name:"/>
-                        <TextBox Grid.Column="1" Grid.ColumnSpan="2" Margin="0 0 3 0" Height="20"/>
-                        <Button Content="Create Order" Grid.Column="3"/> <!--TODO: Command to create order-->
-
-                        <!--Customers Phone number-->
-                        <TextBlock Text="Phone #:" Grid.Column="0" Grid.Row="1"  VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" Height="20"/>
-                        <TextBlock Margin="5" Text="Date:" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center"/>
-                        <DatePicker Grid.Row="1" Grid.Column="3" />
-                         
-                        <!--Customers Address-->
-                        <TextBlock Text="Address: " Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" />
-                        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Margin="0 2 2 0" Height="20"/>
-
-                    </Grid>
-                </Grid>
-                <!--Customer Order-->
-                <!--<TextBlock Text="Please &quot;Create Order&quot;" Grid.Row="1" HorizontalAlignment="Center"/>-->
-                <ScrollViewer Grid.Row="1">
-                <ContentControl x:Name="OrderControl"  Margin="5 5">
-                    <TextBlock Text="Please &quot;Create an Order&quot;" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <!--Customer Information-->
+                <ContentControl >
+                    <userControl:CustomerInfo/>
                 </ContentControl>
-                </ScrollViewer>
-                <Grid Grid.Row="2">
+                
+                <!--Customer Order Listing-->
+                <ContentControl  Grid.Row="1" x:Name="OrderContentControl" Margin="5 5">
+                    <local:OrderUserControl/>
+                </ContentControl>
 
-                    <TextBlock Text="Total" HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding Total}" HorizontalAlignment="Right"/>
-                </Grid>
+                <!--Footer Total and Check Out-->
+                <ContentControl Grid.Row="2" x:Name="FooterUserControl">
+                    <userControl:OrderTotal/>
+                </ContentControl>
             </Grid>
         </Border>
         <!--Product Layout-->
@@ -99,8 +70,11 @@
 
                 </Grid>
                 <!--Available Product Listing-->
-                <ContentControl Grid.Row="2" x:Name="ProductListingControl" Margin="0 5 0 0"/>
-                
+                <ContentControl Grid.Row="2" x:Name="ProductListingControl" Margin="0 5 0 0">
+                    
+                </ContentControl>
+
+
             </Grid>
         </Border>
 

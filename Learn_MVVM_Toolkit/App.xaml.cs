@@ -32,8 +32,14 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        List<Product> p = ProductGenerator.CreateFakeProduct(1000);
+
+        //for (int i = 0; i < p.Count; i++)
+        //{
+        //    dataBaseModel.InsertProductTransaction(p[i]);
+        //}
         
-    
     }
 
     
@@ -48,6 +54,8 @@ public partial class App : Application
         serviceCollection.AddTransient<ProductUserControlViewModel>();
         serviceCollection.AddTransient<OrderUserControlViewModel>();
         serviceCollection.AddTransient<ProductDialogViewModel>();
+        serviceCollection.AddTransient<ProductInfoDialogViewModel>();
+        serviceCollection.AddTransient<SaleInfoDialogViewModel>();
 
 
         return serviceCollection.BuildServiceProvider();

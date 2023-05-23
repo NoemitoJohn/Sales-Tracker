@@ -1,23 +1,9 @@
-﻿using Learn_MVVM_Toolkit.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Learn_MVVM_Toolkit.ViewModel;
-
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Learn_MVVM_Toolkit.CustomUserControl;
 using Learn_MVVM_Toolkit.Dialog;
-using CommunityToolkit.Mvvm.DependencyInjection;
+using Learn_MVVM_Toolkit.ViewModel;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Learn_MVVM_Toolkit;
 
@@ -38,22 +24,35 @@ public partial class MainWindow : Window
         OrderUserControlViewModel orderViewodel = Ioc.Default.GetService<OrderUserControlViewModel>();
 
         //TODO: Edit this for later
-        OrderControl.Content = new OrderUserControl { DataContext = orderViewodel };
+        //OrderContentControl.Content = new OrderUserControl { DataContext = orderViewodel };
         productUserControl = new ProductUserControl { DataContext = productViewModel };
 
         ProductListingControl.Content = productUserControl;
 
+        SizeChanged += (s, e) => {
+            OrderUserControl content = (OrderUserControl)OrderContentControl.Content;
+
+            ItemsPresenter presenter = content.ScrollViewer.Content as ItemsPresenter;
+            
+            UserControl userControl = (UserControl)FooterUserControl.Content;
+            Grid gridFooter =  (Grid) userControl.FindName("GridFooterLayout");
+            gridFooter.Width = presenter.ActualWidth;
+        };
     }
 
-
-    private void AddProductDialogHandler(object sender, RoutedEventArgs e)
+    private void ProductInfoDialogHandler(object sender, RoutedEventArgs e)
     {
-        AddProductDialog dialog = new AddProductDialog
-        {
-            //DataContext = Ioc.Default.GetService<ProductDialogViewModel>()
-        };
+
+        var prodcutDialogInfo = new ProductInfoDialog();
         
-        dialog.Owner = this;
-        dialog.ShowDialog();
+        prodcutDialogInfo.Owner = this;
+        prodcutDialogInfo.ShowDialog();
+    }
+
+    private void SaleInfoDialogHandler(object sender, RoutedEventArgs e)
+    {
+        var saleDialogInfo = new SaleInfoDialog();
+        saleDialogInfo.Owner = this;
+        saleDialogInfo.ShowDialog();
     }
 }

@@ -3,22 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Learn_MVVM_Toolkit.ObservableObjects;
 
-public partial class SaleProductObservable : ObservableObject
+public class SaleProductObservable : ObservableObject
 {
 
     private string _name;
+    private double _total;
+    private double _price;
+    private int _count;
+    private readonly ProductObservable productObservable;
+
     public string Name
     {
         get => _name;
         set => SetProperty(ref _name, value);
     }
-
-    private double _price;
     public double Price
     {
         get => _price;
@@ -30,21 +34,11 @@ public partial class SaleProductObservable : ObservableObject
             }
         }
     }
-
-    private int _count;
     public int Count
     {
         get => _count;
-        set
-        {
-            if (SetProperty(ref _count, value))
-            {
-                OnPropertyChanged(nameof(Total));
-            }
-        }
+        set => SetProperty(ref _count, value);
     }
-
-    private double _total;
     public double Total
     {
         get
@@ -54,27 +48,26 @@ public partial class SaleProductObservable : ObservableObject
         }
         set => SetProperty(ref _total, value);
     }
+    public int Available => productObservable.Count;
 
-    private readonly Product product;
+    public ProductObservable ProductInfo => productObservable;
 
-    private readonly ProductObservable productObservable;
+    public SaleProductObservable()
+    {
+
+    }
+
     public SaleProductObservable(ProductObservable ObservableP)
     {
         productObservable = ObservableP;
-        product = productObservable.GetProduct();
         Name = productObservable.Name; 
         Price = productObservable.Price;
         Count = 1;
         Total = Price * Count;
     }
 
-    public int GetProductAvailableCount()
-    {
-        return productObservable.Count;
-    }
+    public double GetTotalCost() => productObservable.Cost * Count;
+    public double GetTotalPrice() => Total;
+    public double GetTotalProfit () => GetTotalPrice() - GetTotalCost();
 
-    public ProductObservable GetProduct()
-    {
-        return productObservable;
-    }
 }
