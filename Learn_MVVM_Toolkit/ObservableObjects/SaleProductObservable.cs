@@ -37,7 +37,13 @@ public class SaleProductObservable : ObservableObject
     public int Count
     {
         get => _count;
-        set => SetProperty(ref _count, value);
+        set
+        {
+            if (SetProperty(ref _count, value))
+            {
+                OnPropertyChanged(nameof(Total));
+            }
+        }
     }
     public double Total
     {
@@ -52,7 +58,7 @@ public class SaleProductObservable : ObservableObject
 
     public ProductObservable ProductInfo => productObservable;
 
-    public SaleProductObservable()
+    public SaleProductObservable(int count, ProductObservable ObservableP) : this(ObservableP)
     {
 
     }

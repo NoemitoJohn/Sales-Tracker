@@ -44,7 +44,7 @@ public partial class MainWindowViewModel : ObservableObject
         // get all of the product in the database 
         IList<Product> products = databaseModel.GetAllProductAsList();
 
-
+         
         CheckOutCommand = new RelayCommand(CheckOut);
 
         //TODO: Improve this make sure to update the ProductObservable if new Item is added 
@@ -63,12 +63,12 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         SaleProducts.CollectionChanged += SaleProducts_CollectionChanged_Handler;
-
+         
     }
 
     // if item add or remove to the observable sales object update total
-    private void SaleProducts_CollectionChanged_Handler(object sender, NotifyCollectionChangedEventArgs e)
-    {
+    private void SaleProducts_CollectionChanged_Handler(object sender, NotifyCollectionChangedEventArgs e) { 
+    
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
@@ -80,10 +80,14 @@ public partial class MainWindowViewModel : ObservableObject
                 foreach (SaleProductObservable item in e.OldItems)
                 {
                     int itemIndex = item.ProductInfo.GetIndex();
-                    Products[itemIndex].Count += item.Count;
                     Total -= item.Total;
                 }
-                    
+                break;
+            case NotifyCollectionChangedAction.Replace:
+                var oldItem = e.OldItems[0] as SaleProductObservable;
+                var newItem = e.NewItems[0] as SaleProductObservable;
+                Total -= oldItem.Total;
+                Total += newItem.Total;
                 break;
         }
     }

@@ -35,6 +35,7 @@ public class NumericTexboxBehavior : Behavior<TextBox>
     protected override void OnAttached()
     {
         base.OnAttached();
+        
         AssociatedObject.PreviewTextInput += PreviewTextHandler;
         AssociatedObject.PreviewKeyDown += PreviewKeyDownHandler;
 

@@ -25,12 +25,16 @@
             </Popup.Resources>
             <Border BorderBrush="LightGray" BorderThickness=".5">
                 <StackPanel Margin=".5">
-                    <Button Content="Edit" Padding="3.5" />
+                    <Button Content="Edit" Padding="3.5"
+                            Command="{ Binding Path= DataContext.EditOrderItemCommand,
+                            RelativeSource={RelativeSource
+                            AncestorType=UserControl}}"
+                            />
+                    
                     <Button Content="Remove" 
-                            Click="RemoveClickedHandler"
                             Padding="3.5" 
                             Command="{ Binding Path= DataContext.RemoveOrderItemCommand,
-                            RelativeSource={RelativeSource Mode=FindAncestor,
+                            RelativeSource={RelativeSource
                             AncestorType=UserControl}}"
                             />
                 </StackPanel>

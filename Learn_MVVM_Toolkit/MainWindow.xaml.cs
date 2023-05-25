@@ -20,15 +20,15 @@ public partial class MainWindow : Window
 
         DataContext = Ioc.Default.GetService<MainWindowViewModel>();
 
-        ProductUserControlViewModel productViewModel = Ioc.Default.GetService<ProductUserControlViewModel>();
+        //ProductUserControlViewModel productViewModel = Ioc.Default.GetService<ProductUserControlViewModel>();
         OrderUserControlViewModel orderViewodel = Ioc.Default.GetService<OrderUserControlViewModel>();
 
         //TODO: Edit this for later
         //OrderContentControl.Content = new OrderUserControl { DataContext = orderViewodel };
-        productUserControl = new ProductUserControl { DataContext = productViewModel };
+        productUserControl = new ProductUserControl();
 
         ProductListingControl.Content = productUserControl;
-
+        
         SizeChanged += (s, e) => {
             OrderUserControl content = (OrderUserControl)OrderContentControl.Content;
 

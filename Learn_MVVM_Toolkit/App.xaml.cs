@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Learn_MVVM_Toolkit.Dialog;
 using Learn_MVVM_Toolkit.Service;
 using Learn_MVVM_Toolkit.Util;
 using Learn_MVVM_Toolkit.ViewModel;
@@ -18,7 +19,7 @@ namespace Learn_MVVM_Toolkit;
 /// </summary>
 public partial class App : Application
 {
-    IDataBaseModel dataBaseModel; 
+    IDataBaseModel dataBaseModel;
 
     public App()
     {
@@ -27,6 +28,9 @@ public partial class App : Application
         dataBaseModel = Ioc.Default.GetService<IDataBaseModel>();
 
         dataBaseModel.CreateDatabase();
+
+
+
     }
 
     protected override void OnStartup(StartupEventArgs e)
@@ -35,21 +39,27 @@ public partial class App : Application
 
         List<Product> p = ProductGenerator.CreateFakeProduct(1000);
 
-        //for (int i = 0; i < p.Count; i++)
-        //{
-        //    dataBaseModel.InsertProductTransaction(p[i]);
-        //}
+        Window mainWindow = new MainWindow();
+
+        var dialogService = Ioc.Default.GetService<IDialogService>();
+        dialogService.SetWindowOwner(mainWindow);
+
         
+        dialogService.Register<SelectedProductDialogViewModel, SelectedProductDialog>();
+
+
+
+        MainWindow.Show();
     }
 
-    
+
 
     public IServiceProvider CofigureServices()
     {
         var serviceCollection = new ServiceCollection();
-        
-        serviceCollection.AddSingleton<IDataBaseModel, DataBaseModel>();
 
+        serviceCollection.AddSingleton<IDataBaseModel, DataBaseModel>();
+        serviceCollection.AddSingleton<IDialogService, DialogService>();
         serviceCollection.AddScoped<MainWindowViewModel>();
         serviceCollection.AddTransient<ProductUserControlViewModel>();
         serviceCollection.AddTransient<OrderUserControlViewModel>();

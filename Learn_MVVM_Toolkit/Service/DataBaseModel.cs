@@ -13,7 +13,6 @@ namespace Learn_MVVM_Toolkit.Service;
 public class DataBaseModel : IDataBaseModel
 {
 
-
     public void CreateDatabase()
     {
         using var connection = new SqliteConnection("Data Source = Test.db");
