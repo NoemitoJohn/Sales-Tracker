@@ -27,7 +27,7 @@ namespace Learn_MVVM_Toolkit.Dialog
             
         }
 
-        public void OnDataContextLoaded(object sender)
+        public void OnDataContextLoaded(object sender, object viewModel)
         {
             if (sender is ProductUserControlViewModel)
             {

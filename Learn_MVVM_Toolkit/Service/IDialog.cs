@@ -16,7 +16,7 @@ public interface IDialog
     void Close();
     bool? ShowDialog();
 
-    void OnDataContextLoaded(object sender);
+    void OnDataContextLoaded(object sender, object viewModel);
 
 }
 public interface IDialogService
@@ -102,7 +102,7 @@ public class DialogService : IDialogService
         dialog.DataContext = viewModel;
         dialog.Owner = owner;
 
-        dialog.OnDataContextLoaded(sender);
+        dialog.OnDataContextLoaded(sender, viewModel);
 
 
         return dialog.ShowDialog();

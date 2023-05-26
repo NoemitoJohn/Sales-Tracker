@@ -84,9 +84,9 @@
 
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Click="ItemClickedHandler" 
+                    <Button Click="ItemClickedHandler" x:Name="ItemBtn"
                             Command="{Binding Path= DataContext.SelectedItemCommand , RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
-                            CommandParameter="{Binding }">
+                            CommandParameter="{Binding  }" >
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>

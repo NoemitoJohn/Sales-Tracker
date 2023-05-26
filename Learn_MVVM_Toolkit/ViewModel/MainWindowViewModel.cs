@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Learn_MVVM_Toolkit.ObservableObjects;
 using Learn_MVVM_Toolkit.Service;
+using Learn_MVVM_Toolkit.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,6 +21,7 @@ public partial class MainWindowViewModel : ObservableObject
     private double _total;
 
     private IDataBaseModel databaseModel;
+    private IDialogService dialogService;
 
     public Order Order
     {
@@ -34,11 +36,13 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     public IRelayCommand CheckOutCommand { get; }
+    public IRelayCommand OpenSaleInfoCommand { get; }
+    public IRelayCommand OpenProductInfoCommand { get; }
 
-    public MainWindowViewModel(IDataBaseModel DbModel)
+    public MainWindowViewModel(IDataBaseModel DbModel, IDialogService dialogService)
     {
         databaseModel = DbModel;
-
+        this.dialogService = dialogService;
         // get all sold orders from database
         List<Sold> solds = databaseModel.GetAllSoldOrders();
         // get all of the product in the database 
@@ -46,7 +50,8 @@ public partial class MainWindowViewModel : ObservableObject
 
          
         CheckOutCommand = new RelayCommand(CheckOut);
-
+        OpenSaleInfoCommand = new RelayCommand(OpenSaleInfo);
+        OpenProductInfoCommand = new RelayCommand(OpenProductInfo);
         //TODO: Improve this make sure to update the ProductObservable if new Item is added 
 
 
@@ -139,6 +144,35 @@ public partial class MainWindowViewModel : ObservableObject
     {
         SaleProducts.Clear();
         Total = 0;
+    }
+    // Command 
+    protected void OpenSaleInfo()
+    {
+        var viewModel = new SaleInfoDialogViewModel(Sale);
+        bool? result = dialogService.ShowDialog(viewModel, this);
+
+        if (result.HasValue)
+        {
+            if (result.Value)
+            {
+
+            }
+        }
+
+    }
+
+    protected void OpenProductInfo()
+    {
+        var viewModel = new ProductInfoDialogViewModel(Products);
+        bool? resut = dialogService.ShowDialog(viewModel, this);
+        
+        if (resut.HasValue)
+        {
+            if (resut.Value)
+            {
+
+            }
+        }
     }
 
     public void CreateOrder()

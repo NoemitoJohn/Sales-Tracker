@@ -16,16 +16,12 @@ namespace Learn_MVVM_Toolkit.ViewModel;
 
 public delegate void Notify();
 
-public delegate void SaleProductSelected(ProductUserControlViewModel viewModel, SaleProductObservable sale);
-
 public partial class ProductUserControlViewModel : ObservableObject
 {
 
-    
     private MainWindowViewModel _mainViewModel;
     private IDialogService dialogService { get; }
-    public ObservableCollection<ProductObservable> Products => _mainViewModel.Products;
-
+    public ObservableCollection<ProductObservable> Products { get; }
     private SaleProductObservable _selectedSaleProduct;
     public SaleProductObservable SelectedSaleProduct
     {
@@ -41,11 +37,10 @@ public partial class ProductUserControlViewModel : ObservableObject
     public ProductUserControlViewModel(MainWindowViewModel mainViewModel, IDialogService dialogService)
     {
         _mainViewModel = mainViewModel;
-
+        Products = _mainViewModel.Products;
         AddProductCommand = new RelayCommand<ProductObservable>(AddProduct);
         AddCartCommand = new RelayCommand<SaleProductObservable>(AddCart);
 
-        
         this.dialogService = dialogService;
     }
 
@@ -53,6 +48,7 @@ public partial class ProductUserControlViewModel : ObservableObject
     private void AddProduct(ProductObservable product)
     {
         SelectedSaleProduct = new SaleProductObservable(product);
+
         SelectedProductDialogViewModel viewModel = new(SelectedSaleProduct);
 
         bool? result = dialogService.ShowDialog(viewModel, this);

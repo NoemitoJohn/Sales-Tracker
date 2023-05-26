@@ -28,9 +28,6 @@ public partial class App : Application
         dataBaseModel = Ioc.Default.GetService<IDataBaseModel>();
 
         dataBaseModel.CreateDatabase();
-
-
-
     }
 
     protected override void OnStartup(StartupEventArgs e)
@@ -46,14 +43,10 @@ public partial class App : Application
 
         
         dialogService.Register<SelectedProductDialogViewModel, SelectedProductDialog>();
-
-
-
+        dialogService.Register<SaleInfoDialogViewModel, SaleInfoDialog>();
+        dialogService.Register<ProductInfoDialogViewModel, ProductInfoDialog>();
         MainWindow.Show();
     }
-
-
-
     public IServiceProvider CofigureServices()
     {
         var serviceCollection = new ServiceCollection();

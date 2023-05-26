@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Learn_MVVM_Toolkit.ObservableObjects;
+using Learn_MVVM_Toolkit.Service;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace Learn_MVVM_Toolkit.ViewModel;
 
-public class ProductInfoDialogViewModel : ObservableObject
+public class ProductInfoDialogViewModel : ObservableObject, IDialogRequestClose
 {
-    public ObservableCollection<ProductObservable> Products => mainViewMode.Products;
-    MainWindowViewModel mainViewMode;
+    public ObservableCollection<ProductObservable> Products { get; }
+   
+    public event EventHandler<DialogCloseRequestEventArgs> CloseRequest;
 
-    public ProductInfoDialogViewModel(MainWindowViewModel viewModel)
+    public ProductInfoDialogViewModel(ObservableCollection<ProductObservable> products)
     {
-        mainViewMode= viewModel;    
-
+        Products = products;
     }
 
     

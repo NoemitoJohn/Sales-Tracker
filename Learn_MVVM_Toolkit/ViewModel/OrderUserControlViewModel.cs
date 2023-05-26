@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Learn_MVVM_Toolkit.Dialog;
 using Learn_MVVM_Toolkit.ObservableObjects;
 using Learn_MVVM_Toolkit.Service;
+using Learn_MVVM_Toolkit.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,16 +13,14 @@ using System.Threading.Tasks;
 
 namespace Learn_MVVM_Toolkit.ViewModel;
 
-public class OrderUserControlViewModel : ObservableObject
+public class OrderUserControlViewModel : ObservableObject, IPopUpViewModel
 {
     private MainWindowViewModel _mainModel;
-
+    
     private SaleProductObservable _selectedSaleItem;
-
-    public event Notify PopUpClicked;
-
-    public event EventHandler ShowDailogItemInfo;
-    //
+    private IDialogService _dialogService;
+    
+    public event EventHandler<PopUpResultEventArgs> PopUpResult;
 
     public SaleProductObservable SelectedSaleProduct { get; set; }
     public ObservableCollection<SaleProductObservable> SaleProducts => _mainModel.SaleProducts;
@@ -29,10 +28,7 @@ public class OrderUserControlViewModel : ObservableObject
     public IRelayCommand RemoveOrderItemCommand { get; }
     public IRelayCommand EditOrderItemCommand { get; }
 
-    public IRelayCommand<SaleProductObservable> SaveEditCommand { get; }
     public IRelayCommand<SaleProductObservable> SelectedItemCommand { get; }
-
-    IDialogService _dialogService;
 
     public OrderUserControlViewModel(MainWindowViewModel mainModel, IDialogService dialogService)
     {
@@ -41,24 +37,13 @@ public class OrderUserControlViewModel : ObservableObject
         RemoveOrderItemCommand = new RelayCommand(RemoveItem);
         EditOrderItemCommand = new RelayCommand(EditItem);
         SelectedItemCommand = new RelayCommand<SaleProductObservable>(SelectedItem);
-        SaveEditCommand = new RelayCommand<SaleProductObservable>(SaveEdit);
-
-    }
-
-    public void SaveEdit(SaleProductObservable saleProduct)
-    {
-        if (saleProduct.Count > 0 && saleProduct.Count <= saleProduct.Available)
-        {
-            int index = SaleProducts.IndexOf(_selectedSaleItem);
-            SaleProducts[index] = saleProduct;
-            //TODO: create an event and notify the window dialog that its time to close :) 
-        }
     }
 
     public void EditItem()
     {
-        PopUpClicked.Invoke();
-        
+        // PopUpClicked.Invoke();
+        PopUpResult?.Invoke(this, new PopUpResultEventArgs(false));
+
         var viewModel = new SelectedProductDialogViewModel(SelectedSaleProduct);
         
         bool? result = _dialogService.ShowDialog(viewModel, this);
@@ -77,17 +62,17 @@ public class OrderUserControlViewModel : ObservableObject
         }
     }
 
-
     public void RemoveItem()
     {
         SaleProducts.Remove(_selectedSaleItem);
-        PopUpClicked.Invoke();
+        PopUpResult?.Invoke(this, new PopUpResultEventArgs(false));
     }
 
     public void SelectedItem(SaleProductObservable item)
     {
         _selectedSaleItem = item;
         SelectedSaleProduct = new(item.ProductInfo);
+        PopUpResult?.Invoke(this, new PopUpResultEventArgs(true));
     }
 
 

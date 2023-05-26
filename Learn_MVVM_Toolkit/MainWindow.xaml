@@ -16,8 +16,8 @@
         </Grid.ColumnDefinitions>
         <!--Side Bar-->
         <StackPanel Grid.Column="0" >
-            <Button Content="Product Info" Click="ProductInfoDialogHandler"/>
-            <Button Content="Sale Info" Click="SaleInfoDialogHandler"/>
+            <Button Content="Product Info" Command="{Binding OpenProductInfoCommand}"/>
+            <Button Content="Sale Info" Command="{Binding OpenSaleInfoCommand}"/>
             
         </StackPanel>
 
@@ -37,8 +37,8 @@
                 </ContentControl>
                 
                 <!--Customer Order Listing-->
-                <ContentControl  Grid.Row="1" x:Name="OrderContentControl" Margin="5 5">
-                    <local:OrderUserControl/>
+                <ContentControl Grid.Row="1" x:Name="OrderContentControl" Margin="5 5">
+                    <!--<local:OrderUserControl/>-->
                 </ContentControl>
 
                 <!--Footer Total and Check Out-->

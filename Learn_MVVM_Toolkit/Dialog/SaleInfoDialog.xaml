@@ -16,7 +16,7 @@
             <Setter Property="FontSize" Value="12px"/>
         </Style>
         <util:GridStyleSelector x:Key="GridStyleSelector"/>
-        <DataTemplate  x:Key="SoldDataTemplate" DataType="{x:Type observables:SoldObservable}">
+        <DataTemplate x:Key="SoldDataTemplate" DataType="{x:Type observables:SoldObservable}">
             <Expander IsExpanded="False">
                 <Expander.Header>
                     <!--Expander Header-->

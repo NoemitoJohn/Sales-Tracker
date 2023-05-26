@@ -1,53 +1,31 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Learn_MVVM_Toolkit.Dialog;
+using Learn_MVVM_Toolkit.Util;
 using Learn_MVVM_Toolkit.ViewModel;
+using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Learn_MVVM_Toolkit;
 
-/// <summary>
-/// Interaction logic for OrderUserControl.xaml
-/// </summary>
-public partial class OrderUserControl : UserControl
+
+public partial class OrderUserControl : UserControl , IPopUpView, IUserControl
 {
     private Window mainWindow;
-    private OrderUserControlViewModel viewModel;
+    //public double popUpPosition { get; set; }
+    public FrameworkElement PopUpTarget { get; set; }
+
+    // private OrderUserControlViewModel viewModel;
 
     private ScrollViewer scrollViewer;
     public ScrollViewer ScrollViewer  => scrollViewer;
     public OrderUserControl()
     {
-
         InitializeComponent();
-        Init();
-    
+        
+        
     }
-
-
-    private void Init()
-    {
-        DataContext = viewModel = Ioc.Default.GetService<OrderUserControlViewModel>();
-
-        mainWindow = Application.Current.MainWindow;
-
-        mainWindow.SizeChanged += MainWindow_SizeChanged_Handler;
-        viewModel.PopUpClicked += ViewModel_PopUpClicked;
-        viewModel.ShowDailogItemInfo += ViewModel_ShowDailogItemInfo;
-    }
-
-    private void ViewModel_ShowDailogItemInfo(object sender, System.EventArgs e)
-    {
-        //var dialog = new SelectedProductDialog(sender);
-        //dialog.Owner = App.Current.MainWindow;
-        //dialog.ShowDialog();
-    }
-
-    private void ViewModel_PopUpClicked()
-    {
-        if (ItemSelectedPopup.IsOpen == true) ItemSelectedPopup.IsOpen = false;
-    }
-
     private void MainWindow_SizeChanged_Handler(object sender, SizeChangedEventArgs e)
     {
         if (scrollViewer == null)
@@ -59,17 +37,19 @@ public partial class OrderUserControl : UserControl
 
     private void ItemClickedHandler(object sender, RoutedEventArgs e)
     {
-        ItemSelectedPopup.IsOpen = false;
-
-        Button itemButton = (Button)sender;
-        double width = itemButton.ActualWidth;
-
-        Border popupContent = (Border)ItemSelectedPopup.Child; // get PopUp Content 
-        //PopUp placement
-        ItemSelectedPopup.PlacementTarget = itemButton;
-        ItemSelectedPopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-        ItemSelectedPopup.IsOpen = true;
-        ItemSelectedPopup.HorizontalOffset = (width - popupContent.ActualWidth) - 2;
-        
+        PopUpTarget = sender as FrameworkElement;
     }
+
+    public void OnDataContextLoaded(Window mainWindow, object dataContext)
+    {
+        this.mainWindow = mainWindow;
+        
+        mainWindow.SizeChanged += MainWindow_SizeChanged_Handler;
+
+        PopupManager popUpMangager = new PopupManager(mainWindow);
+        
+        popUpMangager.CreatePopUp(ItemSelectedPopup, this, dataContext as IPopUpViewModel);
+    }
+
+    // 342.59999999999997
 }
