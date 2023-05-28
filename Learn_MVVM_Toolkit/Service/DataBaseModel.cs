@@ -7,6 +7,8 @@ using System.Data;
 using System.Web;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using static System.Net.Mime.MediaTypeNames;
+using System.Xml;
 
 namespace Learn_MVVM_Toolkit.Service;
 
@@ -23,6 +25,14 @@ public class DataBaseModel : IDataBaseModel
 
             using var command = connection.CreateCommand();
 
+            // CREATE TABLE IF NOT EXISTS SoldProduct (
+            // OrdID INTEGER NOT NULL,
+            // Name  TEXT NOT NULL,
+            // Count INTEGER NOT NULL,
+            // TCost REAL NOT NULL,
+            // TPrice    REAL NOT NULL,
+            // TProfit   REAL NOT NULL)
+
             //Change the "Price" to Cost and "RetailPrice" to Price
 
             command.CommandText = @"
@@ -38,7 +48,24 @@ public class DataBaseModel : IDataBaseModel
                         ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                         ProductID INTEGER NOT NULL,
                         Sold INTEGER NOT NULL,
-                        Description TEXT)";
+                        Description TEXT)
+
+                        CREATE TABLE IF NOT EXISTS Orders (
+                        OrderID INTEGER  PRIMARY KEY NOT NULL UNIQUE AUTOINCREMENT,
+                        OrderDate TEXT NOT NULL,
+                        TYPE TEXT,
+                        TotalCost REAL NOT NULL,
+                        TotalRevenue REAL NOT NULL,
+                        TotalProfit REAL)
+
+                        CREATE TABLE IF NOT EXISTS SoldProduct (
+                        OrdID INTEGER NOT NULL,
+                        Name  TEXT NOT NULL,
+                        Count INTEGER NOT NULL,
+                        TCost REAL NOT NULL,
+                        TPrice    REAL NOT NULL,
+                        TProfit   REAL NOT NULL)";
+
             //TODO: Return the resut for checking if the table is created   
             int result = command.ExecuteNonQuery();
         }
@@ -323,7 +350,5 @@ public class DataBaseModel : IDataBaseModel
         }
 
         return soldList;
-
-        //throw new NotImplementedException();
     }
 }
