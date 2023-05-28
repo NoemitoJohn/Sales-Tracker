@@ -13,7 +13,7 @@ public partial class MainWindow : Window
 
     private MainWindowViewModel mainViewModel;
 
-    ProductUserControl productUserControl;
+     
 
     public MainWindow()
     {
@@ -25,14 +25,17 @@ public partial class MainWindow : Window
         OrderUserControlViewModel orderViewodel = Ioc.Default.GetService<OrderUserControlViewModel>();
         OrderUserControl orderControlView = new();
 
-        UserControlManager orderControl = new(this, orderControlView, orderViewodel);
+        UserControlManager orderControlManager = new(this, orderControlView, orderViewodel);
 
 
-        OrderContentControl.Content = orderControl.GetUserControl();
+        OrderContentControl.Content = orderControlManager.GetUserControl();
 
-        productUserControl = new ProductUserControl();
+        ProductUserControlViewModel productUserViewModel = Ioc.Default.GetService<ProductUserControlViewModel>();
+        ProductUserControl productControlView = new();
 
-        ProductListingControl.Content = productUserControl;
+        UserControlManager productUserManager = new(this, productControlView, productUserViewModel);
+
+        ProductListingControl.Content = productUserManager.GetUserControl();
         
         SizeChanged += (s, e) => {
             OrderUserControl content = (OrderUserControl)OrderContentControl.Content;

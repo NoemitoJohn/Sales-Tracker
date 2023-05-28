@@ -9,7 +9,7 @@ namespace Learn_MVVM_Toolkit.Util;
 
 public class ProductGenerator
 {
-    static string[] names =
+    public static string[] names =
     {
         "Product 1",
         "Product 2",
@@ -24,7 +24,7 @@ public class ProductGenerator
         "Product 11",
         //
     };
-    static string[] description =
+    public static string[] description =
     {
         "Description 1",
         "Description 2",
@@ -38,7 +38,7 @@ public class ProductGenerator
         "Description 9",
         "Description 10",
     };
-    static string[] category =
+    public static string[] category =
     {
         "Category 1",
         "Category 2",

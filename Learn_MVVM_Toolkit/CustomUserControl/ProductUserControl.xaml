@@ -12,29 +12,52 @@
              d:DataContext="{d:DesignInstance Type=viewmodel:ProductUserControlViewModel}"
              mc:Ignorable="d" 
              
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="400">
 
-    <Grid Grid.IsSharedSizeScope="True" FocusManager.FocusedElement="{ Binding ElementName=QtyTextBox}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
-
-        <!--Header-->
-        <Grid Grid.Row="0" x:Name="Header" HorizontalAlignment="Left" >
+        <!--Search Bar-->
+        <Grid Grid.Row="0" >
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto" SharedSizeGroup="ButtonAddGroup"/>
+                <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Name" Grid.Column="0"/>
-            <TextBlock Text="Price" Grid.Column="1"/>
-            <TextBlock Text="Available" Grid.Column="2"/>
+
+            <TextBlock Text="Name" VerticalAlignment="Bottom"/>
+            <TextBox  Grid.Column="1" Width="200" Margin="5 0 0 0" Text="{Binding NameSearch, UpdateSourceTrigger=PropertyChanged}" />
+            <ComboBox x:Name="CategoryComboBox" Grid.Column="3" />
+            <Button Grid.Column="5" Content="Search"/>
+
         </Grid>
 
-        <!--#region PopUp-->
-        <Popup x:Name="OrderPopup" HorizontalAlignment="Left" VerticalAlignment="Top" 
+        <Grid Grid.IsSharedSizeScope="True"  Grid.Row="1" FocusManager.FocusedElement="{ Binding ElementName= QtyTextBox}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!--Header-->
+            <Grid Grid.Row="0" x:Name="Header" Margin="0 7 0 0" HorizontalAlignment="Left" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="ButtonAddGroup"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Name" Grid.Column="0"/>
+                <TextBlock Text="Price" Grid.Column="1"/>
+                <TextBlock Text="Available" Grid.Column="2"/>
+            </Grid>
+
+            <!--#region PopUp-->
+            <!--<Popup x:Name="OrderPopup" HorizontalAlignment="Left" VerticalAlignment="Top" 
                Width="210" 
                Height="110"
                
@@ -59,14 +82,20 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <!--Item Name-->
+                        -->
+            <!--Item Name-->
+            <!--
                         <TextBlock Text="Name:" />
                         <TextBox Text="{Binding Path= Name}" Grid.Column="1" IsEnabled="False"/>
-                        <!--Item Price-->
+                        -->
+            <!--Item Price-->
+            <!--
                         <TextBlock Grid.Column="0" Grid.Row="1" Text="Price:"/>
                         <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path= Price, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <!--Count (Qty)-->
+                        -->
+            <!--Count (Qty)-->
+            <!--
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Qty" />
                         <TextBox Text="{Binding Path= Count, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" x:Name="QtyTextBox">
 
@@ -75,11 +104,15 @@
                             </i:Interaction.Behaviors>
                             
                         </TextBox>
-                        <!--Total Price-->
+                        -->
+            <!--Total Price-->
+            <!--
                         <TextBlock Text="Total:" Grid.Row="3"/>
                         <TextBox IsEnabled="False" Text="{Binding Path= Total}" Grid.Column="1" Grid.Row="3" />
 
-                        <!--Buttons Cancel and Cart--> 
+                        -->
+            <!--Buttons Cancel and Cart-->
+            <!-- 
                         <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right">
                             <Button Content="Cancel" IsCancel="True" x:Name="ClosePopUpButton" />
                             <Button Content="Cart" IsDefault="True" Click="AddCartButton" Command="{Binding Path=DataContext.AddCartCommand,
@@ -92,50 +125,50 @@
                     </Grid>
                 </Border>
             </Border>
-        </Popup>
-        <!--#endregion-->
-        <ContentControl x:Name="ContentControlPopUp"/>
+        </Popup>-->
+            <!--#endregion-->
+            <!--<ContentControl x:Name="ContentControlPopUp"/>-->
 
-        <!--ItemListing-->
-        <ItemsControl Grid.Row="1" VirtualizingPanel.ScrollUnit="Pixel" x:Name="ItemListing" ItemsSource="{Binding Path = Products}"  Margin="0 5 0 0">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <!--<StackPanel VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"/>-->
-                    <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+            <!--ItemListing-->
+            <ItemsControl Grid.Row="1" VirtualizingPanel.ScrollUnit="Pixel" x:Name="ItemListing" ItemsSource="{Binding Path = Products}"  Margin="0 3 0 0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <!--<StackPanel VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"/>-->
+                        <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-            <ItemsControl.Template>
-                <ControlTemplate TargetType="ItemsControl">
-                    <ScrollViewer x:Name="ScrollViewPresenter" CanContentScroll="True" Focusable="False">
-                        <ScrollViewer.Resources>
-                            <!--<sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">12</sys:Double>-->
-                        </ScrollViewer.Resources>
-                        <ItemsPresenter/>
-                    </ScrollViewer>
-                </ControlTemplate>
-            </ItemsControl.Template>
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <ScrollViewer x:Name="ScrollViewPresenter" CanContentScroll="True" Focusable="False">
+                            <ScrollViewer.Resources>
+                                <!--<sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">12</sys:Double>-->
+                            </ScrollViewer.Resources>
+                            <ItemsPresenter/>
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ItemsControl.Template>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto" SharedSizeGroup="ButtonAddGroup" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Name}"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Price}" />
-                        <TextBlock Grid.Column="2" Text="{Binding Count}" />
-                        <Button Grid.Column="3" Content="Add" x:Name="Add"
-                                Command="{Binding Path=DataContext.AddProductCommand,
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="ButtonAddGroup" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Name}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Price}" />
+                            <TextBlock Grid.Column="2" Text="{Binding Count}" />
+                            <Button Grid.Column="3" Content="Add" x:Name="Add"
+                                Command="{Binding Path= DataContext.AddProductCommand,
                                 RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                
                                 CommandParameter="{Binding}"/>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
     </Grid>
 </UserControl>

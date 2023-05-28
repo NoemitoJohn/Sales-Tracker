@@ -56,21 +56,9 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <!--Search Bar for Product-->
-                <Grid Grid.Row="0" >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Text="Name" VerticalAlignment="Bottom"/>
-                    <TextBox  Grid.Column="1" Width="200" Margin="5 0 0 0"/>
-                    <Button Grid.Column="3" Content="Search"/>
-
-                </Grid>
+                <!--      -->
                 <!--Available Product Listing-->
-                <ContentControl Grid.Row="2" x:Name="ProductListingControl" Margin="0 5 0 0">
+                <ContentControl Grid.Row="2" x:Name="ProductListingControl">
                     
                 </ContentControl>
 

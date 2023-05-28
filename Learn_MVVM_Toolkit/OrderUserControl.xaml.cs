@@ -13,23 +13,17 @@ namespace Learn_MVVM_Toolkit;
 public partial class OrderUserControl : UserControl , IPopUpView, IUserControl
 {
     private Window mainWindow;
-    //public double popUpPosition { get; set; }
     public FrameworkElement PopUpTarget { get; set; }
-
-    // private OrderUserControlViewModel viewModel;
 
     private ScrollViewer scrollViewer;
     public ScrollViewer ScrollViewer  => scrollViewer;
     public OrderUserControl()
     {
         InitializeComponent();
-        
-        
     }
     private void MainWindow_SizeChanged_Handler(object sender, SizeChangedEventArgs e)
     {
-        if (scrollViewer == null)
-            scrollViewer = (ScrollViewer)SalesItemControl.Template.FindName("ScrollViewPresenter", SalesItemControl);
+        scrollViewer ??= (ScrollViewer)SalesItemControl.Template.FindName("ScrollViewPresenter", SalesItemControl);
 
         ItemsPresenter presenter = (ItemsPresenter)scrollViewer.Content;
         SaleGridHeader.Width = presenter.ActualWidth;
@@ -51,5 +45,4 @@ public partial class OrderUserControl : UserControl , IPopUpView, IUserControl
         popUpMangager.CreatePopUp(ItemSelectedPopup, this, dataContext as IPopUpViewModel);
     }
 
-    // 342.59999999999997
 }

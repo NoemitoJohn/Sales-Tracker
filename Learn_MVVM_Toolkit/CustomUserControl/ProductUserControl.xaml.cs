@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Learn_MVVM_Toolkit.Dialog;
 using Learn_MVVM_Toolkit.ObservableObjects;
+using Learn_MVVM_Toolkit.Util;
 using Learn_MVVM_Toolkit.ViewModel;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -10,37 +13,14 @@ using System.Windows.Input;
 
 namespace Learn_MVVM_Toolkit.CustomUserControl;
 
-/// <summary>
-/// Interaction logic for ProductUserControl.xaml
-/// </summary>
-public partial class ProductUserControl : UserControl
+public partial class ProductUserControl : UserControl, IUserControl
 {
     private Window mainWindow;
     private ScrollViewer scrollveiwer;
-    private ProductUserControlViewModel viewModel;
-    private SelectedProductDialog itemInfoDialog;
     public ProductUserControl()
     {
-        // get the content of the content control
-        InitializeComponent();
-        mainWindow = App.Current.MainWindow;
-        DataContext = viewModel = Ioc.Default.GetService<ProductUserControlViewModel>();
-        // get the pop up control
         
-        mainWindow.SizeChanged += MainWindow_SizeChanged_Handler;
-        PreviewKeyDown += PreviewKeyDown_Handler;
-        mainWindow.StateChanged += MainWindow_StateChanged_Handler;
-        
-
-    }
-
-    // MainWindow Check State if minimize
-    private void MainWindow_StateChanged_Handler(object sender, EventArgs e)
-    {
-        if (mainWindow == null) return;
-        if (mainWindow.WindowState == WindowState.Minimized && OrderPopup.IsOpen == true)
-            OrderPopup.IsOpen = false;
-
+        InitializeComponent();     
     }
 
     // Window Resize Callback
@@ -53,25 +33,13 @@ public partial class ProductUserControl : UserControl
         Header.Width = presenter.ActualWidth;
     }
 
-    private void PreviewKeyDown_Handler(object sender, KeyEventArgs e)
+    public void OnDataContextLoaded(Window window, object dataContext)
     {
-        if (e.Key == Key.Escape)
-        {
-            if (OrderPopup.IsOpen == true)
-                OrderPopup.IsOpen = false;
-        }
+        mainWindow = window;
         
+        mainWindow.SizeChanged += MainWindow_SizeChanged_Handler;
+
+        ComboBoxManager categoryComboBox = new();
+        categoryComboBox.Create(CategoryComboBox, dataContext as IComboBoxViewModel);
     }
-
-    private void AddCartButton(object sender, RoutedEventArgs e)
-    {
-        ProductUserControlViewModel context = (ProductUserControlViewModel)DataContext;
-        SaleProductObservable selected = context.SelectedSaleProduct;
-
-        if(selected.Count > 0 && selected.Count <= selected.Available) OrderPopup.IsOpen = false;
-        
-    }
-
-
-
 }

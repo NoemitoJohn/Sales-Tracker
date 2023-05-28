@@ -160,6 +160,21 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
     }
+    public bool SaleExist(int index)
+    {
+        bool result = false;
+
+        foreach (var item in SaleProducts) 
+        {
+            if(item.ProductInfo.GetIndex() == index)
+            {
+                result = true;
+            }
+        
+        }
+        return result;
+
+    }
 
     protected void OpenProductInfo()
     {

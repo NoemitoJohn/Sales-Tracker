@@ -17,9 +17,7 @@ public interface IPopUpView
 }
 public interface IPopUpMangager
 {
-
     public void CreatePopUp<TPopUpView, TViewModel>(Popup popUp, TPopUpView view, TViewModel viewModel) where TPopUpView : IPopUpView where TViewModel : IPopUpViewModel;
-
 }
 
 public interface IPopUpViewModel
