@@ -51,14 +51,7 @@ public class DialogService : IDialogService
         _mappings = new Dictionary<Type, Type>();
     }
 
-    /**
-    public DialogService(Window owner)
-    {
-        this.owner = owner;
-        
-    }
-    **/
-
+    
     public void Register<TViewModel, TView>() where TViewModel : IDialogRequestClose where TView : IDialog
     {
         if(owner == null)

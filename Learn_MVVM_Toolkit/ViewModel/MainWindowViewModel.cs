@@ -54,6 +54,14 @@ public partial class MainWindowViewModel : ObservableObject
         OpenProductInfoCommand = new RelayCommand(OpenProductInfo);
         //TODO: Improve this make sure to update the ProductObservable if new Item is added 
 
+        DeductionObservable deductionTest = new(DateTime.Now, Order.TYPE.DEDUCTION, "Bayad sa turko", 100);
+        DeductionObservable deductionTest1 = new(new DateTime(2023,05,28), Order.TYPE.DEDUCTION, "Bayad sa turko", 100);
+        DeductionObservable deductionTest2 = new(new DateTime(2023, 05, 26), Order.TYPE.DEDUCTION, "Bayad sa turko", 100);
+        DeductionObservable deductionTest3 = new(new DateTime(2023, 05, 24), Order.TYPE.DEDUCTION, "Bayad sa turko", 100);
+       
+
+        
+
 
         //TODO: Improve this for loop move to DataBase class 
         // 
@@ -66,6 +74,12 @@ public partial class MainWindowViewModel : ObservableObject
         {
             Sale.Insert(0, new SoldObservable(solds[i])); //Insert 
         }
+
+        Sale.Add(deductionTest);
+        Sale.Add(deductionTest1);
+        Sale.Add(deductionTest2);
+        Sale.Add(deductionTest3);
+
 
         SaleProducts.CollectionChanged += SaleProducts_CollectionChanged_Handler;
          
@@ -127,6 +141,8 @@ public partial class MainWindowViewModel : ObservableObject
             totalPrice += sold.TotalPrice;
             totalProfit += sold.TotalProfit;
 
+            int newCount = Products[item.ProductInfo.GetIndex()].Count -= item.Count;
+            // update dataBase 
             orders.Add(sold);
         }
 

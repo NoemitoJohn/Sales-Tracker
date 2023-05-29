@@ -5,13 +5,17 @@ using Learn_MVVM_Toolkit.Dialog;
 using Learn_MVVM_Toolkit.ObservableObjects;
 using Learn_MVVM_Toolkit.Service;
 using Learn_MVVM_Toolkit.Util;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Input;
 
 namespace Learn_MVVM_Toolkit.ViewModel;
@@ -22,8 +26,9 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
 {
 
     private string selectedCategory;
-
+    private long delay = 1000;
     private MainWindowViewModel _mainViewModel;
+    Timer timer;
     private IDialogService dialogService { get; }
     public ObservableCollection<ProductObservable> Products1 { get; set; }
 
@@ -59,8 +64,9 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
 
             if (SetProperty(ref _nameSearch, value))
             {
-                if (SearchCommand.CanExecute(value))
-                    SearchCommand.Execute(value);
+                TimeToExecute(value);
+
+                
             }
         }
     }
@@ -95,8 +101,9 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
         Category[3] = "Category 3";
         Category[4] = "Category 4";
         Category[5] = "Category 5";
-
         selectedCategory = "none";
+
+        timer = new(delay);
 
         ComboBoxItems = new ObservableCollection<string>(Category);
 
@@ -104,7 +111,7 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
 
         Products = new ObservableCollection<ProductObservable>(productTemp);
 
-        SearchCommand = new RelayCommand<string>(Search, (string value) => value.Length >= 3 || value.Length == 0);
+        SearchCommand = new RelayCommand<string>(Search, (string value) => value.Length >= 1 || value.Length == 0);
 
         AddProductCommand = new RelayCommand<ProductObservable>(AddProduct);
 
@@ -130,7 +137,7 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
         else
         {
             var searchAllCategory = productTemp.Where(p => p.Name.ToLower().Contains(value.ToLower()) && p.Category.ToLower() == selectedCategory);
-
+            
             if (searchAllCategory.Any())
             {
                 Products = new ObservableCollection<ProductObservable>(searchAllCategory);
@@ -166,7 +173,30 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
         _mainViewModel.AddToSaleProductObservable(sale);
         SelectedSaleProduct = null;
     }
+    
+    void TimeToExecute(object value)
+    {
 
+        timer.Stop();
+        
+        timer.Start();
+        
+        ElapsedEventHandler handler = null;
+        
+        handler = (sender, s) =>
+        {
+            timer.Stop();
+            timer.Elapsed -= handler;
+            
+            if (SearchCommand.CanExecute(value))
+                SearchCommand.Execute(value);
+            
+        };
+
+        timer.Elapsed += handler;
+
+
+    }
 
     public void OnComboBoxSelected(string val)
     {

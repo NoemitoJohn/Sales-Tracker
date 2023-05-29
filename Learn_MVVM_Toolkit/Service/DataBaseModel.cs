@@ -25,14 +25,6 @@ public class DataBaseModel : IDataBaseModel
 
             using var command = connection.CreateCommand();
 
-            // CREATE TABLE IF NOT EXISTS SoldProduct (
-            // OrdID INTEGER NOT NULL,
-            // Name  TEXT NOT NULL,
-            // Count INTEGER NOT NULL,
-            // TCost REAL NOT NULL,
-            // TPrice    REAL NOT NULL,
-            // TProfit   REAL NOT NULL)
-
             //Change the "Price" to Cost and "RetailPrice" to Price
 
             command.CommandText = @"
@@ -57,6 +49,7 @@ public class DataBaseModel : IDataBaseModel
                         TotalCost REAL NOT NULL,
                         TotalRevenue REAL NOT NULL,
                         TotalProfit REAL)
+
 
                         CREATE TABLE IF NOT EXISTS SoldProduct (
                         OrdID INTEGER NOT NULL,

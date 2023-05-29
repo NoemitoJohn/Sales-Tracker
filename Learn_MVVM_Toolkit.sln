@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learn_MVVM_Toolkit", "Learn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApplicationTesting", "..\ConsoleApp\ConsoleApplicationTesting\ConsoleApplicationTesting.csproj", "{F94EAD08-5B79-40BD-8388-F850EC32C31E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{B00A9E6B-14AB-43E1-9B06-9C608E74727E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F94EAD08-5B79-40BD-8388-F850EC32C31E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F94EAD08-5B79-40BD-8388-F850EC32C31E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F94EAD08-5B79-40BD-8388-F850EC32C31E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B00A9E6B-14AB-43E1-9B06-9C608E74727E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B00A9E6B-14AB-43E1-9B06-9C608E74727E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B00A9E6B-14AB-43E1-9B06-9C608E74727E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B00A9E6B-14AB-43E1-9B06-9C608E74727E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

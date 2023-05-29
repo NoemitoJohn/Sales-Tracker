@@ -1,22 +1,34 @@
 ﻿using Learn_MVVM_Toolkit.Service;
+using Learn_MVVM_Toolkit.Util;
 using Learn_MVVM_Toolkit.ViewModel;
+using System;
 using System.Windows;
 
 namespace Learn_MVVM_Toolkit.Dialog;
 
 public partial class SaleInfoDialog : Window, IDialog
 {
-    //private SaleInfoDialogViewModel viewModel;
+    private SaleInfoDialogViewModel vModel;
+    
+
     public SaleInfoDialog()
     {
-        InitializeComponent();
-
-        // SizeChanged += (e, s) => { Debug.Log("Width: " + Width); Debug.Log("Height: " + Height); };
+        InitializeComponent();  
     }
 
     public void OnDataContextLoaded(object sender, object viewModel)
     {
-        var vModel = (SaleInfoDialogViewModel)viewModel;
-        SoldHeader.ItemsSource = vModel.Sale;
+        vModel = (SaleInfoDialogViewModel)viewModel;
+
+        IComboxBoxManager comboxManager = new ComboBoxManager();
+
+        comboxManager.Create(ComboBoxCategory, (IComboBoxViewModel)viewModel);
+        
+        OrderDatePickerManager datePickerManager = new((IOrderDatePickerViewModel)viewModel, DateFrom, DateTo);
+
+        Closing += (sender, e) =>
+        {
+            datePickerManager.Disposed();
+        };
     }
 }

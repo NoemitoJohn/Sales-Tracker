@@ -12,7 +12,6 @@ namespace Learn_MVVM_Toolkit.ObservableObjects;
 public class OrderObservable : ObservableObject
 {
 
-
     public string Date { get; }
 
     public Order.TYPE type { get; }
@@ -37,7 +36,6 @@ public class DeductionObservable : OrderObservable
     }
 
 }
-
 
 public class SoldObservable : OrderObservable
 {

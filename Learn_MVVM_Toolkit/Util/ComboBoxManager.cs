@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace Learn_MVVM_Toolkit.Util;
 
@@ -20,12 +21,12 @@ public interface IComboBoxViewModel
     void OnComboBoxSelected(string val); 
 }
 
-public interface IComboxBoxManagerP
+public interface IComboxBoxManager
 {
     void Create(ComboBox comboBox, IComboBoxViewModel viewModel);
 }
 
-public class ComboBoxManager : IComboxBoxManagerP
+public class ComboBoxManager : IComboxBoxManager
 {
     // ComboBox Object 
     // ViewModel 
@@ -35,7 +36,9 @@ public class ComboBoxManager : IComboxBoxManagerP
 
         comboBox.ItemsSource = viewModel.ComboBoxItems;
         
-        comboBox.SelectedIndex = 0;
+        comboBox.SelectedIndex = 1;
+
+        viewModel.OnComboBoxSelected(comboBox.SelectedItem.ToString().ToLower());
 
         comboBox.SelectionChanged += (sender, e) =>
         {
