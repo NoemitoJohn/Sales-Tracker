@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Learn_MVVM_Toolkit.Message;
 using Learn_MVVM_Toolkit.ObservableObjects;
 using Learn_MVVM_Toolkit.Service;
 using Learn_MVVM_Toolkit.ViewModel;
@@ -10,7 +12,7 @@ using System.Collections.Specialized;
 
 namespace Learn_MVVM_Toolkit;
 
-public partial class MainWindowViewModel : ObservableObject
+public partial class MainWindowViewModel : ObservableObject , IRecipient<AddSaleProductObMessage> , IRecipient<AddProductObMessage>
 {
     public ObservableCollection<ProductObservable> Products { get; } = new();
     public ObservableCollection<SaleProductObservable> SaleProducts { get; } = new();
@@ -19,6 +21,8 @@ public partial class MainWindowViewModel : ObservableObject
     private Order _order;
 
     private double _total;
+
+    private IMessenger Messenger { get; }
 
     private IDataBaseModel databaseModel;
     private IDialogService dialogService;
@@ -39,35 +43,33 @@ public partial class MainWindowViewModel : ObservableObject
     public IRelayCommand OpenSaleInfoCommand { get; }
     public IRelayCommand OpenProductInfoCommand { get; }
 
-    public MainWindowViewModel(IDataBaseModel DbModel, IDialogService dialogService)
+    public MainWindowViewModel(IDataBaseModel DbModel, IDialogService dialogService, IMessenger messengerService)
     {
         databaseModel = DbModel;
         this.dialogService = dialogService;
+        Messenger = messengerService;
         // get all sold orders from database
+
+        IList<Product> products = databaseModel.GetAllProductAsList();
         List<Sold> solds = databaseModel.GetAllSoldOrders();
         // get all of the product in the database 
-        IList<Product> products = databaseModel.GetAllProductAsList();
 
-         
+
         CheckOutCommand = new RelayCommand(CheckOut);
         OpenSaleInfoCommand = new RelayCommand(OpenSaleInfo);
         OpenProductInfoCommand = new RelayCommand(OpenProductInfo);
         //TODO: Improve this make sure to update the ProductObservable if new Item is added 
 
         DeductionObservable deductionTest = new(DateTime.Now, Order.TYPE.DEDUCTION, "Bayad sa turko", 100);
-        DeductionObservable deductionTest1 = new(new DateTime(2023,05,28), Order.TYPE.DEDUCTION, "Bayad sa turko", 100);
+        DeductionObservable deductionTest1 = new(new DateTime(2023, 05, 28), Order.TYPE.DEDUCTION, "Bayad sa turko", 100);
         DeductionObservable deductionTest2 = new(new DateTime(2023, 05, 26), Order.TYPE.DEDUCTION, "Bayad sa turko", 100);
         DeductionObservable deductionTest3 = new(new DateTime(2023, 05, 24), Order.TYPE.DEDUCTION, "Bayad sa turko", 100);
-       
-
-        
-
 
         //TODO: Improve this for loop move to DataBase class 
         // 
         for (int i = 0; i < products.Count; i++)
         {
-            Products.Add(new ProductObservable(i,products[i])); //Add
+            Products.Add(new ProductObservable(i, products[i])); //Add
         }
 
         for (int i = 0; i < solds.Count; i++)
@@ -80,14 +82,20 @@ public partial class MainWindowViewModel : ObservableObject
         Sale.Add(deductionTest2);
         Sale.Add(deductionTest3);
 
+        
 
         SaleProducts.CollectionChanged += SaleProducts_CollectionChanged_Handler;
-         
+
+        Messenger.Register<AddSaleProductObMessage>(this);
+        Messenger.Register<AddProductObMessage>(this);
+
+
     }
 
     // if item add or remove to the observable sales object update total
-    private void SaleProducts_CollectionChanged_Handler(object sender, NotifyCollectionChangedEventArgs e) { 
-    
+    private void SaleProducts_CollectionChanged_Handler(object sender, NotifyCollectionChangedEventArgs e)
+    {
+
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
@@ -112,17 +120,18 @@ public partial class MainWindowViewModel : ObservableObject
     }
     //TODO: Maybe add a method to add an item to Saleproduct?????  
     public void AddToSaleProductObservable(SaleProductObservable sale) =>
-        SaleProducts.Add(sale);
-    
+        SaleProducts.Add(sale); //reciever
 
-    public void AddToProductObservable(ProductObservable product) =>    
+
+    public void AddToProductObservable(ProductObservable product) =>
         Products.Add(product);
-    
+
 
     public void CheckOut()
     {
         //
         if (SaleProducts.Count <= 0) return;
+
         List<SoldProductObservable> orders = new();
 
         double totalCost = 0;
@@ -131,19 +140,39 @@ public partial class MainWindowViewModel : ObservableObject
 
         DateTime d = DateTime.Now; //TODO: Test date ONLY refer to create order method
 
-        foreach (SaleProductObservable item in SaleProducts)
+        foreach (SaleProductObservable soldItem in SaleProducts)
         {
             SoldProductObservable sold =
-                new(item.Name, item.Count, item.GetTotalCost(),
-                item.GetTotalPrice(), item.GetTotalProfit());
+                new(soldItem.Name, soldItem.Count, soldItem.GetTotalCost(),
+                soldItem.GetTotalPrice(), soldItem.GetTotalProfit());
 
             totalCost += sold.TotalCost;
             totalPrice += sold.TotalPrice;
             totalProfit += sold.TotalProfit;
 
-            int newCount = Products[item.ProductInfo.GetIndex()].Count -= item.Count;
+            int newCount = Products[soldItem.ProductInfo.GetIndex()].Count -= soldItem.Count;
+
+            // send a message that something with the product count value to the ProductUserControl
+            Messenger.Send(new ProductObNewCountMessage(
+                new ProductObNewCount
+                (soldItem.ProductInfo.GetIndex(), newCount)));
+
+
+            int updateCountReesult = databaseModel.UpdateProductCount(soldItem.ProductInfo.ProductBase.ID, newCount);
             // update dataBase 
-            orders.Add(sold);
+
+
+            int newSold = soldItem.ProductInfo.Info.Sold + soldItem.Count;
+
+            Products[soldItem.ProductInfo.GetIndex()].Info.Sold = newSold;
+            
+            //soldItem.ProductInfo.Info.Sold = newSold;
+            
+            int updateSoldResult = databaseModel.UpdateProductSold(soldItem.ProductInfo.ProductBase.ID, newSold);
+
+            if (updateCountReesult > 0)
+                orders.Add(sold);
+
         }
 
         Sold soldOrder = new(d, Order.TYPE.CASH, totalCost, totalPrice, totalProfit, orders);
@@ -156,6 +185,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     }
 
+    
+
     private void ResetOrder()
     {
         SaleProducts.Clear();
@@ -164,7 +195,7 @@ public partial class MainWindowViewModel : ObservableObject
     // Command 
     protected void OpenSaleInfo()
     {
-        var viewModel = new SaleInfoDialogViewModel(Sale);
+        var viewModel = new SaleInfoDialogViewModel(Sale, this);
         bool? result = dialogService.ShowDialog(viewModel, this);
 
         if (result.HasValue)
@@ -180,13 +211,13 @@ public partial class MainWindowViewModel : ObservableObject
     {
         bool result = false;
 
-        foreach (var item in SaleProducts) 
+        foreach (var item in SaleProducts)
         {
-            if(item.ProductInfo.GetIndex() == index)
+            if (item.ProductInfo.GetIndex() == index)
             {
                 result = true;
             }
-        
+
         }
         return result;
 
@@ -196,7 +227,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var viewModel = new ProductInfoDialogViewModel(Products);
         bool? resut = dialogService.ShowDialog(viewModel, this);
-        
+
         if (resut.HasValue)
         {
             if (resut.Value)
@@ -211,4 +242,14 @@ public partial class MainWindowViewModel : ObservableObject
 
     }
 
+    public void Receive(AddSaleProductObMessage message)
+    {
+        SaleProducts.Add(message.Value);
+    }
+
+    public void Receive(AddProductObMessage message)
+    {
+
+        AddToProductObservable(new ProductObservable(Products.Count,message.Value));
+    }
 }

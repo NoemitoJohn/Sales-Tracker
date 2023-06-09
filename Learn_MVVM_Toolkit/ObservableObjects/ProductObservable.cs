@@ -57,7 +57,7 @@ public partial class ProductObservable : ObservableObject
         set => SetProperty(ref _info, value);
     }
     #endregion
-    public Product Product => product;
+    public Product ProductBase => product;
 
 
     public ProductObservable(int index, Product p) :this(p)

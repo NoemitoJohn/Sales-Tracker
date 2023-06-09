@@ -5,46 +5,85 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Learn_MVVM_Toolkit.Dialog"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:behavior="clr-namespace:Learn_MVVM_Toolkit.CustomBehavior"
+        xmlns:behavior="clr-namespace:Learn_MVVM_Toolkit.CustomBehavior" 
+        xmlns:viewmodel="clr-namespace:Learn_MVVM_Toolkit.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=viewmodel:ProductDialogViewModel}"
         mc:Ignorable="d"
-        ResizeMode="NoResize"
         Width="250"
-        Height="150"
+        Height="300"
         ShowInTaskbar="False"
+        SizeToContent="Height"  
         WindowStartupLocation="CenterOwner" 
         Title="Add Product">
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+    
+    
+    <Grid Margin="5 7" HorizontalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width= "auto"/>
+            <ColumnDefinition Width= "*"/>
+            <ColumnDefinition Width= "auto"/>
+            <ColumnDefinition Width= "*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
         <!--Name-->
-        <TextBlock Margin="0 0 2 0" HorizontalAlignment="Center" Text="Name"/>
-        <TextBox x:Name="NameTextBox" Grid.Column="1" Width="150" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Name}"/>
+        <!--Count-->
+        <TextBlock Margin="0 2 0 0" Grid.Row="1" Grid.Column="0" Text="Count:"/>
+        <TextBox Margin="0 2 0 0" Grid.Row="1"  Grid.Column="1" Text="{Binding Count}"/>
         
+        <TextBlock Margin="0 2 0 0"  Grid.Row="1" Grid.Column="2" Text="Cost:"/>
+        <TextBox Margin="0 2 0 0"  Grid.Row="1"  Grid.Column="3" Grid.ColumnSpan="3" Text="{Binding Cost}"/>
         <!--Price-->
-        <TextBlock Margin="0 3 0 0" HorizontalAlignment="Center" Text="Price" Grid.Row="1"/>
-        <TextBox x:Name="PriceTextBox" Margin="0 3 0 0" Grid.Column="1" Width="150" Grid.Row="1" Text="{Binding Price ,UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBlock Margin="0 2 0 0"  Grid.Row="3" Grid.Column="0" Text="Price:"/>
+        <TextBox Margin="0 2 0 0"  Grid.Row="3"  Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Price}"/>
+
+        <StackPanel Margin="0 2 0 0" Grid.Row="4" Grid.ColumnSpan="4">
+            <TextBlock Text="Description:" />
+            <TextBox Text="{Binding Description}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="4">
+            <TextBlock Text="Select Category"/>
+            <ComboBox SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding Category}"/>
+        </StackPanel>
         
-        <!--Qty-->
-        <TextBlock Margin="0 3 0 0" HorizontalAlignment="Center" Text="Qty" Grid.Row="2"/>
-        <TextBox x:Name="QtyTextBox" Margin="0 3 0 0" Grid.Column="1" Width="150" Grid.Row="2" Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}">
+        
+        <StackPanel Margin="0 2 0 0"  Orientation="Vertical" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="4">
+            <TextBlock Text="Create Category:"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox />
+                <Button Grid.Column="1" Content="Add"/>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Margin="0 5 0 0" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="4" HorizontalAlignment="Right">
+            <Button IsCancel="True" Content="Cancel" Margin=" 0 0 5 0"/>
+            <Button x:Name="Submit" IsDefault="True" />
+            
+        </StackPanel>
+        
+        <!--<TextBox x:Name="QtyTextBox" Margin="0 3 0 0" Grid.Column="1" Width="150" Grid.Row="2" Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}">
             <i:Interaction.Behaviors>
                 <behavior:NumericTexboxBehavior EmptyValue="0"/>
             </i:Interaction.Behaviors>
-        </TextBox>
+        </TextBox>-->
 
 
-            <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 0 0">
-            <Button Padding="4" Margin="0 0 2 0" Content="Cancel" Grid.Column="1" Grid.Row="3" IsCancel="True"/>
-            <Button Padding="4" Content="Add Item" Grid.Column="1" Grid.Row="3" Command="{Binding AddProductItemCommand}"/>
-        </StackPanel>
         
         
         <!--TODO: Maybe Add image preview functionality-->

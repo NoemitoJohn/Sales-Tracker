@@ -72,7 +72,7 @@
                             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                         </Style>
                     </DataGrid.RowStyle>-->
-                    
+
                     <DataGrid.Columns>
                         <DataGridTextColumn Width="*" Header="Name" Binding="{Binding Name}"  />
                         <DataGridTextColumn Width="*" Header="Qty" Binding="{Binding Count}"/>
@@ -80,18 +80,6 @@
                         <DataGridTextColumn Width="*" Header="Total Price" Binding="{Binding TotalPrice}"/>
                         <DataGridTextColumn Width="*" Header="Total Profit" Binding="{Binding TotalProfit}"/>
                     </DataGrid.Columns>
-                    
-                    <!--<ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type observables:SaleProductObservable}">
-                            <StackPanel Margin="35 0 0 0" Orientation="Horizontal" Background="BlueViolet">
-                                <TextBlock Text="{Binding Name}"/>
-                                <TextBlock Text="{Binding Count}" Margin="3 0 0 0"/>
-                                <TextBlock Text="{Binding TotalCost}" Margin="3 0 0 0"/>
-                                <TextBlock Text="{Binding Total}" Margin="3 0 0 0"/>
-                                <TextBlock Text="{Binding Profit}" Margin="3 0 0 0"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>-->
                 </DataGrid>
             </Expander>
         </DataTemplate>
@@ -106,8 +94,6 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition   />
                     <ColumnDefinition   />
-
-
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" >
                     <TextBlock Text="{Binding Date}"/>
@@ -126,15 +112,11 @@
                         <TextBlock Text="Amount:"/>
                         <TextBlock Margin="5 0 5 0" Text="{Binding Amount}"/>
                     </StackPanel>
-
                 </Grid>
-
-
             </Grid>
         </DataTemplate>
 
-        <util:SaleTemplateSelector x:Key="SaleTemplateSelector" 
-                                   SoldTemplateName="SoldDataTemplate" DeductionTemplateName="DeductionDataTemplate"/>
+        <util:SaleTemplateSelector x:Key="SaleTemplateSelector" SoldTemplateName="SoldDataTemplate" DeductionTemplateName="DeductionDataTemplate"/>
     </Window.Resources>
 
     <Border BorderBrush="Black" BorderThickness=".5" Margin="10">
@@ -143,30 +125,32 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Height="50" BorderBrush="Black" BorderThickness=".5">
+            <Border Grid.Row="0" BorderBrush="Black" BorderThickness=".5">
                 <Border.Resources>
                     <Style TargetType="TextBlock">
                         <Setter Property="FontSize" Value="15"/>
                     </Style>
                 </Border.Resources>
                 <StackPanel Margin=" 0 0 5 0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <ComboBox Width="100" SelectedIndex="0" x:Name="ComboBoxCategory">
+                    <Button Content="Create Deduction" Margin="0 0 10 0" Command="{Binding CreateDeductionCommand}"/>
+
+                    <ComboBox Width="100" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding SelectedCategory}" x:Name="ComboBoxCategory">
                         
                     </ComboBox>
 
                     <TextBlock Text="From:" VerticalAlignment="Center" Margin="10 0 5 0"/>
-                    <DatePicker x:Name="DateFrom">
+                    <DatePicker x:Name="DateFrom" SelectedDate="{Binding DateFrom}">
                         
                     </DatePicker>
 
                     <TextBlock Margin="25 0 5 0" VerticalAlignment="Center" Text="To:"/>
-                    <DatePicker x:Name="DateTo">
+                    <DatePicker x:Name="DateTo" SelectedDate="{Binding DateTo}">
                         
                     </DatePicker>
-                    <Button Margin="10 0 0 0" Padding="5" Content="Search" Command="{Binding SeachOrderDateCommand}"/>
+                    <Button Margin="10 0 0 0" Content="Search" Command="{Binding SeachOrderDateCommand}"/>
                 </StackPanel>
             </Border>
-            <Border Grid.Row="1"  Background="Bisque" BorderBrush="Black" BorderThickness=".5" Margin="0 5 0 0">
+            <Border Grid.Row="1" BorderBrush="Black" BorderThickness=".5" Margin="0 5 0 0">
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -191,7 +175,18 @@
                         </ItemsControl.Template>
 
                     </ItemsControl>
-                    <Border Grid.Row="1" BorderBrush="Black" BorderThickness=".5" Height="20"/>
+                    <Border Grid.Row="1" BorderBrush="Black" BorderThickness=".5" Height="20">
+                        <StackPanel Orientation="Horizontal" Margin="5 2">
+                            <TextBlock Text="Total Deduction:" Foreground="Red"/>
+                            <TextBlock Margin="5 0 0 0" Text="{Binding OrderTotalDeduction, StringFormat=N2}" Foreground="Red"/> <!--Deduction-->
+                            <TextBlock Margin="20 0 0 0" Text="Total Cost:"/>
+                            <TextBlock Margin="5 0 0 0" Text="{Binding OrderTotalCost, StringFormat=N2}"/> 
+                            <TextBlock Margin="20 0 0 0" Text="Total Revenue:"/>
+                            <TextBlock Margin="5 0 0 0" Text="{Binding OrderTotalRevenue, StringFormat=N2}"/>
+                            <TextBlock Margin="20 0 0 0" Text="Total Profit:"/>
+                            <TextBlock Margin="5 0 0 0" Text="{Binding OrderTotalProfit, StringFormat=N2}"/>
+                        </StackPanel>
+                    </Border>
                 </Grid>
 
             </Border>

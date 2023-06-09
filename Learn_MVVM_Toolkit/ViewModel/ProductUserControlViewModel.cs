@@ -1,35 +1,31 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Learn_MVVM_Toolkit.Dialog;
+using CommunityToolkit.Mvvm.Messaging;
+using Learn_MVVM_Toolkit.Message;
 using Learn_MVVM_Toolkit.ObservableObjects;
 using Learn_MVVM_Toolkit.Service;
 using Learn_MVVM_Toolkit.Util;
-using Microsoft.Win32;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
-using System.Windows.Input;
 
 namespace Learn_MVVM_Toolkit.ViewModel;
 
 public delegate void Notify();
 
-public partial class ProductUserControlViewModel : ObservableObject, IComboBoxViewModel
+public partial class ProductUserControlViewModel : ObservableObject, IComboBoxViewModel, IRecipient<AddProductObMessage>, IRecipient<ProductObNewCountMessage>
 {
 
     private string selectedCategory;
+
     private long delay = 1000;
-    private MainWindowViewModel _mainViewModel;
+
+    private SaleProductObservable _selectedSaleProduct;
+    private IMessenger MessengerService { get; }
+
     Timer timer;
-    private IDialogService dialogService { get; }
+    private IDialogService DialogService { get; }
     public ObservableCollection<ProductObservable> Products1 { get; set; }
 
     private ObservableCollection<string> _comboBoxItems;
@@ -41,22 +37,17 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
         get => _products;
         set => SetProperty(ref _products, value);
     }
-
-    private SaleProductObservable _selectedSaleProduct;
-
     public SaleProductObservable SelectedSaleProduct
     {
         get => _selectedSaleProduct;
         set => SetProperty(ref _selectedSaleProduct, value);
     }
-
     public IRelayCommand AddProductCommand { get; }
     public IRelayCommand AddCartCommand { get; }
 
-
     private string _nameSearch;
 
-    public string NameSearch
+    public string NameSearchText
     {
         get => _nameSearch;
         set
@@ -64,7 +55,7 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
 
             if (SetProperty(ref _nameSearch, value))
             {
-                TimeToExecute(value);
+                TimeToExecuteSearch(value);
 
                 
             }
@@ -79,7 +70,7 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
         set => SetProperty(ref _category, value);
     }
 
-    public MainWindowViewModel MainViewModel => _mainViewModel;
+    private MainWindowViewModel MainViewModel { get; }
 
     public IList<ProductObservable> productTemp;
     private IRelayCommand<string> SearchCommand { get; }
@@ -89,10 +80,13 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
         get => _comboBoxItems;
         set => SetProperty(ref _comboBoxItems, value);
     }
-
-    public ProductUserControlViewModel(MainWindowViewModel mainViewModel, IDialogService dialogService)
+   
+    public ProductUserControlViewModel(MainWindowViewModel mainViewModel, IDialogService dialogService, IMessenger messengerService)
     {
-        _mainViewModel = mainViewModel;
+        MessengerService = messengerService;
+        MainViewModel = mainViewModel;
+        DialogService = dialogService;
+        
         Category = new string[6];
 
         Category[0] = "NONE";
@@ -100,14 +94,14 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
         Category[2] = "Category 2";
         Category[3] = "Category 3";
         Category[4] = "Category 4";
-        Category[5] = "Category 5";
+        Category[5] = "Category 5"; 
         selectedCategory = "none";
 
         timer = new(delay);
 
         ComboBoxItems = new ObservableCollection<string>(Category);
 
-        productTemp = new List<ProductObservable>(_mainViewModel.Products.ToList());
+        productTemp = new List<ProductObservable>(MainViewModel.Products.ToList());
 
         Products = new ObservableCollection<ProductObservable>(productTemp);
 
@@ -117,8 +111,8 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
 
         AddCartCommand = new RelayCommand<SaleProductObservable>(AddCart);
 
-        this.dialogService = dialogService;
-
+        MessengerService.Register<AddProductObMessage>(this);
+        MessengerService.Register<ProductObNewCountMessage>(this);
 
     }
 
@@ -137,44 +131,42 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
         else
         {
             var searchAllCategory = productTemp.Where(p => p.Name.ToLower().Contains(value.ToLower()) && p.Category.ToLower() == selectedCategory);
-            
+
             if (searchAllCategory.Any())
             {
                 Products = new ObservableCollection<ProductObservable>(searchAllCategory);
             }
         }
-
-
     }
 
     //Convert the selected ProductObservable into SaleProductObservable
     private void AddProduct(ProductObservable product)
     {
-        if (_mainViewModel.SaleExist(product.GetIndex()) == true) return;
+        if (MainViewModel.SaleExist(product.GetIndex()) == true) return;
 
-        SelectedSaleProduct = new SaleProductObservable(product);
+        SelectedSaleProduct = new SaleProductObservable(product);               // obeject to send across
         // if product is already exist in sales list disable add button????
 
         SelectedProductDialogViewModel viewModel = new(SelectedSaleProduct);
 
-        bool? result = dialogService.ShowDialog(viewModel, this);
+        bool? result = DialogService.ShowDialog(viewModel, this);
         // Show dialog
         if (result.HasValue)
         {
             if (result.Value)
             {
-                AddCart(viewModel.SelectedItem);
+                AddCart(viewModel.SelectedItem); // sender
             }
         }
     }
 
     public void AddCart(SaleProductObservable sale)
     {
-        _mainViewModel.AddToSaleProductObservable(sale);
+        MessengerService.Send(new AddSaleProductObMessage(sale));
         SelectedSaleProduct = null;
     }
     
-    void TimeToExecute(object value)
+    void TimeToExecuteSearch(object value)
     {
 
         timer.Stop();
@@ -214,5 +206,17 @@ public partial class ProductUserControlViewModel : ObservableObject, IComboBoxVi
         {
             Products = new ObservableCollection<ProductObservable>(cat);
         }
+    }
+
+    public void Receive(AddProductObMessage message)
+    {
+        ProductObservable p = new(Products.Count, message.Value);
+        productTemp.Add(p);
+        Products = new ObservableCollection<ProductObservable>(productTemp);
+    }
+
+    public void Receive(ProductObNewCountMessage message)
+    {
+        Products[message.Value.ProductId].Count = message.Value.Count;
     }
 }

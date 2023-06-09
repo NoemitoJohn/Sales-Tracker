@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using Learn_MVVM_Toolkit.Dialog;
 using Learn_MVVM_Toolkit.Service;
 using Learn_MVVM_Toolkit.Util;
@@ -39,12 +40,13 @@ public partial class App : Application
         Window mainWindow = new MainWindow();
 
         var dialogService = Ioc.Default.GetService<IDialogService>();
+
         dialogService.SetWindowOwner(mainWindow);
 
-        
         dialogService.Register<SelectedProductDialogViewModel, SelectedProductDialog>();
         dialogService.Register<SaleInfoDialogViewModel, SaleInfoDialog>();
         dialogService.Register<ProductInfoDialogViewModel, ProductInfoDialog>();
+        dialogService.Register<ProductDialogViewModel, AddProductDialog>();
         MainWindow.Show();
     }
     public IServiceProvider CofigureServices()
@@ -53,6 +55,8 @@ public partial class App : Application
 
         serviceCollection.AddSingleton<IDataBaseModel, DataBaseModel>();
         serviceCollection.AddSingleton<IDialogService, DialogService>();
+        serviceCollection.AddSingleton<IMessenger, WeakReferenceMessenger>();
+
         serviceCollection.AddScoped<MainWindowViewModel>();
         serviceCollection.AddTransient<ProductUserControlViewModel>();
         serviceCollection.AddTransient<OrderUserControlViewModel>();

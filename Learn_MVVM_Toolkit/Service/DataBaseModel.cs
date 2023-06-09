@@ -4,20 +4,16 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Web;
-using System.Windows.Controls.Primitives;
-using System.Windows.Media;
-using static System.Net.Mime.MediaTypeNames;
-using System.Xml;
+
+using System.Collections.ObjectModel;
 
 namespace Learn_MVVM_Toolkit.Service;
 
 public class DataBaseModel : IDataBaseModel
 {
-
     public void CreateDatabase()
     {
-        using var connection = new SqliteConnection("Data Source = Test.db");
+        using var connection = new SqliteConnection("Data Source = Test.db"); //TODO: Change file path in our database 
 
         try
         {
@@ -40,31 +36,37 @@ public class DataBaseModel : IDataBaseModel
                         ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                         ProductID INTEGER NOT NULL,
                         Sold INTEGER NOT NULL,
-                        Description TEXT)
-
+                        Description TEXT);
+                        
                         CREATE TABLE IF NOT EXISTS Orders (
-                        OrderID INTEGER  PRIMARY KEY NOT NULL UNIQUE AUTOINCREMENT,
+                        OrderID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE ,
                         OrderDate TEXT NOT NULL,
                         TYPE TEXT,
                         TotalCost REAL NOT NULL,
                         TotalRevenue REAL NOT NULL,
-                        TotalProfit REAL)
-
-
+                        TotalProfit REAL
+                        );                        
+                        
                         CREATE TABLE IF NOT EXISTS SoldProduct (
                         OrdID INTEGER NOT NULL,
                         Name  TEXT NOT NULL,
                         Count INTEGER NOT NULL,
                         TCost REAL NOT NULL,
                         TPrice    REAL NOT NULL,
-                        TProfit   REAL NOT NULL)";
+                        TProfit   REAL NOT NULL);
+                        
+                        CREATE TABLE IF NOT EXISTS Category (
+                        CatID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                        CategoryName  TEXT NOT NULL);
+                        "   
+;
 
             //TODO: Return the resut for checking if the table is created   
             int result = command.ExecuteNonQuery();
         }
         catch (Exception e)
         {
-            Console.WriteLine("Failed to create Tables. " + e.Message);
+            throw new Exception(e.Message);
         }
     }
 
@@ -142,16 +144,17 @@ public class DataBaseModel : IDataBaseModel
 
                     if (productInfoID > 0)
                     {
-                        tempProduct = new Product(productInsertedID, product.Name, product.Count, product.Cost, product.Price, product.Category, new Product.Info(productInfoID, productInsertedID, product.Information.Sold, product.Information.Description));
+                        tempProduct = new Product(productInsertedID, product.Name, product.Count, product.Cost, product.Price, product.Category,
+                            new Product.Info(productInfoID, productInsertedID, product.Information.Sold, product.Information.Description));
                         transaction.Commit();
                     }
                     else transaction.Rollback();
                 }
                 connection.Close();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                throw new Exception(e.Message);
             }
 
         }
@@ -191,6 +194,7 @@ public class DataBaseModel : IDataBaseModel
             {
                 connection.Close();
                 Console.WriteLine("Failed to Insert data to Database. " + e.Message);
+                throw new Exception(e.Message);
             }
 
             connection.Close();
@@ -344,4 +348,90 @@ public class DataBaseModel : IDataBaseModel
 
         return soldList;
     }
+
+    public int UpdateProductCount(int id, double newCount)
+    {
+        using var connection = new SqliteConnection("Data Source = Test.db");
+
+        connection.Open();
+
+        using var transaction = connection.BeginTransaction();
+        using var command = connection.CreateCommand();
+
+        command.CommandText = @"UPDATE Product SET Count = $count WHERE ID = $id";
+
+        command.Parameters.AddWithValue("$count", newCount).SqliteType = SqliteType.Real;
+        command.Parameters.AddWithValue("$id", id).SqliteType = SqliteType.Integer;
+
+        int result = command.ExecuteNonQuery();
+
+        if (result > 0)
+        {
+            transaction.Commit();
+
+        }
+        else
+        {
+            transaction.Rollback();
+        }
+
+        return result;
+
+    }
+
+    public int UpdateProductSold(int id, double newSold)
+    {
+        using var connection = new SqliteConnection("Data Source = Test.db");
+
+        connection.Open();
+
+        using var transaction = connection.BeginTransaction();
+        using var command = connection.CreateCommand();
+        command.CommandText = @"UPDATE ProductInfo SET Sold = $sold Where ProductID = $id";
+
+        command.Parameters.AddWithValue("$sold", newSold).SqliteType = SqliteType.Integer;
+        command.Parameters.AddWithValue("$id", id).SqliteType = SqliteType.Integer;
+
+        int result = command.ExecuteNonQuery();
+
+        if (result > 0)
+        {
+            transaction.Commit();
+
+        }
+        else
+        {
+            transaction.Rollback();
+        }
+
+        return result;
+
+    }
+
+    public Product UpdateProduct(Product product)
+    {
+        return null;
+    }
+
+    public ObservableCollection<string> GetAllCategory()
+    {
+        ObservableCollection<string> category = new();
+
+        using var connection = new SqliteConnection("Data Source = Test.db");
+
+        connection.Open();
+
+        using var selectAllCatCommand = connection.CreateCommand();
+        selectAllCatCommand.CommandText = @"SELECT CategoryName FROM Category";
+
+        var reader = selectAllCatCommand.ExecuteReader();
+
+        while (reader.Read())
+        {
+            category.Add(reader.GetString(reader.GetOrdinal("CategoryName")));
+        }
+
+        return category;
+    }
+
 }

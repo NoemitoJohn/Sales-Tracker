@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Learn_MVVM_Toolkit.Service;
 using Learn_MVVM_Toolkit.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -19,21 +20,31 @@ namespace Learn_MVVM_Toolkit.Dialog
     /// <summary>
     /// Interaction logic for AddProductDialog.xaml
     /// </summary>
-    public partial class AddProductDialog : Window
+    public partial class AddProductDialog : Window, IDialog
     {
-        private readonly ProductDialogViewModel viewModel;
+        private ProductDialogViewModel viewModel;
 
         public AddProductDialog()
         { 
-            InitializeComponent();
-            DataContext = viewModel = Ioc.Default.GetService<ProductDialogViewModel>();
-            
-            viewModel.Name = "Item 1";
-            viewModel.Price = 1;
-            viewModel.Count= 1;
+          InitializeComponent();
         }
 
+        public void OnDataContextLoaded(object sender, object viewModel)
+        {
+            this.viewModel = viewModel as ProductDialogViewModel;
 
+            if (this.viewModel.SelectedProductOB == null)
+            {
+                Submit.Command = this.viewModel.AddProductItemCommand;
+                Submit.Content = "Save";
+            }
+            else
+            {
+                Submit.Command = this.viewModel.UpdateProductItemCommand;
+                Submit.Content = "Update";
+            }
+
+        }
     }
 
 }

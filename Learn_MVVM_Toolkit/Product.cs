@@ -54,7 +54,7 @@ public class Product
     {
         public int ID { get; }
         public int ProductID { get; }
-        public int Sold { get; }
+        public int Sold { get; set; }
         public string Description { get; }
 
         public Info()
@@ -73,6 +73,8 @@ public class Product
             Sold = sold;
             Description = description;
         }
+
+        
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using Learn_MVVM_Toolkit.ObservableObjects;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,10 @@ public interface IDataBaseModel
     public void InsertSold(Sold order);
 
     public List<Sold> GetAllSoldOrders();
-    
+    public int UpdateProductCount(int id, double newCount); 
+    public int UpdateProductSold(int id, double newSold); 
 
+    public Product UpdateProduct(Product product);
+    public ObservableCollection<string> GetAllCategory();
 
 }

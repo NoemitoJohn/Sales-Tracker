@@ -1,33 +1,35 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Learn_MVVM_Toolkit.Builder;
+using Learn_MVVM_Toolkit.Message;
 using Learn_MVVM_Toolkit.ObservableObjects;
 using Learn_MVVM_Toolkit.Service;
-using Learn_MVVM_Toolkit.Util;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.RightsManagement;
-using System.Text;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using static Learn_MVVM_Toolkit.Service.DataBaseModel;
 
 namespace Learn_MVVM_Toolkit.ViewModel;
 
-public partial class ProductDialogViewModel : ObservableObject
+public partial class ProductDialogViewModel : ObservableObject, IDialogRequestClose
 {
     private string _name;
 
-    private double _price;
+    private double _cost;
 
     private int _count;
 
-    private string _category;
+    private ObservableCollection<string> _category;
 
-    private double _retailPrice;
+    private double _price;
 
-    private IDataBaseModel dataBaseModel;
+    private string _description;
+
+    private string _selectedCategory;
+    private IDataBaseModel DataBaseService { get; }
+
+    private IMessenger MessengerService { get; }
 
     public string Name
     {
@@ -35,12 +37,12 @@ public partial class ProductDialogViewModel : ObservableObject
         set => SetProperty(ref _name, value);
     }
 
-    public double Price
+    public double Cost
     {
-        get => _price;
+        get => _cost;
         set
         {
-            if (SetProperty(ref _price, value))
+            if (SetProperty(ref _cost, value))
                 AddProductItemCommand.NotifyCanExecuteChanged();
 
         }
@@ -56,48 +58,112 @@ public partial class ProductDialogViewModel : ObservableObject
         }
     }
 
-    public double RetailPrice
+    public double Price
     {
-        get => _retailPrice;
-        set => SetProperty(ref _retailPrice, value);
+        get => _price;
+        set => SetProperty(ref _price, value);
     }
 
-    public string Category
+    public ObservableCollection<string> Category
     {
         get => _category;
         set => SetProperty(ref _category, value);
     }
-
-    //
-
-    private MainWindowViewModel _mainViewModel;
-
-    public IRelayCommand AddProductItemCommand { get; }
-
-    public ProductDialogViewModel(MainWindowViewModel mainViewModel)
+    public string SelectedCategory
     {
-        this._mainViewModel = mainViewModel;
-        dataBaseModel = Ioc.Default.GetService<IDataBaseModel>();
-        AddProductItemCommand = new RelayCommand(AddProductItem, CanAddItem);
-
-    }
-    private void AddProductItem()
-    {
-        //Product dbProduct = dataBaseModel.InsertProductTransaction(
-        //    new Product(Name, Count, Price, RetailPrice, Category, new Product.Info("test")));
-
-        // the problem is the new inserted product dont have an ID 
-        //if (dbProduct != null)
-        //{
-        //    ProductObservable productObservable = new ProductObservable(dbProduct);
-        //    _mainViewModel.AddToProductObservable(productObservable);
-        //}
-        //TODO inform user if the insert command is success or fail (Toast)
+        get => _selectedCategory;
+        set => SetProperty(ref _selectedCategory, value);
     }
 
-    private bool CanAddItem()
+    public string Description
     {
-        return !string.IsNullOrEmpty(Name) && Price > 0 && Count > 0;
+        get => _description;
+        set => SetProperty(ref _description, value);
+    }
+    public ProductObservable SelectedProductOB { get; }
+
+    public event EventHandler<DialogCloseRequestEventArgs> CloseRequest;
+
+    public IAsyncRelayCommand AddProductItemCommand { get; }
+    public IRelayCommand UpdateProductItemCommand { get; }
+
+    public ProductDialogViewModel(ProductObservable productObservable)
+    {
+        SelectedProductOB = productObservable;
+
+        MessengerService = Ioc.Default.GetService<IMessenger>();
+
+        DataBaseService = Ioc.Default.GetService<IDataBaseModel>();
+
+        AddProductItemCommand = new AsyncRelayCommand(AddProductItem);
+        UpdateProductItemCommand = new RelayCommand(UpdateProductItem);
+
+        Category = DataBaseService.GetAllCategory();
+
+        //SetDefault();
+
+
+        if (productObservable != null)
+        {
+            Name = productObservable.Name;
+            Cost = productObservable.Cost;
+            Count = productObservable.Count;
+            Price = productObservable.Price;
+            SelectedCategory = productObservable.Category;
+            Description = productObservable.Info.Description;
+        }
+    }
+
+    private void UpdateProductItem()
+    {
+        // udpate item from the database
+        // 
+        
+        
+    }
+    public void SetDefault()
+    {
+        Name = "Product Name";
+        Cost = 0;
+        Price = 0;
+        Count = 0;
+        Description = "Product Description";
+    }
+
+
+    private async Task AddProductItem()
+    {
+        ProductBuilder builder = new ProductBuilder();
+        builder.SetName(Name).SetCount(Count).SetCost(Cost).SetPrice(Price).SetCategory(SelectedCategory).
+            InfoBuilder.SetDescription(Description);
+
+        Product p = builder.Build();
+
+        //Task<Product> insertProductTask = InsertAsync(p);
+
+        var productResult = await InsertAsync(p);
+
+        if (productResult != null)
+        {
+            //TODO: CLOSE DIALOG
+            MessengerService.Send(new AddProductObMessage(productResult));
+            
+            CloseRequest.Invoke(this, new DialogCloseRequestEventArgs(false)); 
+
+        }
+    }
+
+    private async Task<Product> InsertAsync(Product p)
+    {
+        Product tempProduct = null;
+
+        await Task.Run(() =>
+        {
+            tempProduct = DataBaseService.InsertProductTransaction(p);
+            //Task.Delay(5000).Wait();  
+        });
+
+        return tempProduct;
     }
 
 }

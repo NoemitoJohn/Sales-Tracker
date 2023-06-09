@@ -19,16 +19,6 @@ public partial class SaleInfoDialog : Window, IDialog
     public void OnDataContextLoaded(object sender, object viewModel)
     {
         vModel = (SaleInfoDialogViewModel)viewModel;
-
-        IComboxBoxManager comboxManager = new ComboBoxManager();
-
-        comboxManager.Create(ComboBoxCategory, (IComboBoxViewModel)viewModel);
         
-        OrderDatePickerManager datePickerManager = new((IOrderDatePickerViewModel)viewModel, DateFrom, DateTo);
-
-        Closing += (sender, e) =>
-        {
-            datePickerManager.Disposed();
-        };
     }
 }
